@@ -6,7 +6,8 @@ export class Game {
     this.lastTime = 0
   }
 
-  draw() {
+  draw(context) {
+    context.fillRect(20, 20, 150, 100)
   }
 
   update() {

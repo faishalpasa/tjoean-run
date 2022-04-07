@@ -9,7 +9,7 @@ export class Fruit {
     this.image = new Image()
     this.image.src = image
     this.frameX = 0
-    this.maxFrame = 0  // total number of frames in image sprites, start from 0
+    this.maxFrame = 16  // total number of frames in image sprites, start from 0
     this.fps = 10
     this.frameTimer = 0
     this.frameInterval = 1000 / this.fps

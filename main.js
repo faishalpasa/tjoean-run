@@ -17,6 +17,7 @@ window.addEventListener('load', () => {
     height: CANVAS_HEIGHT,
     width: CANVAS_WIDTH
   }
+  const fruitList = ['Apple', 'Bananas', 'Cherries', 'Kiwi', 'Melon', 'Orange', 'Pineapple', 'Strawberry']
   
   const keyboard = new KeyboardHandler()
   const game = new Game(canvasContext)
@@ -35,7 +36,9 @@ window.addEventListener('load', () => {
 
   const handleShowFruits = (deltaTime) => {
     if (fruitTimer > fruitInterval + randomInterval) {
-      fruits.push(new Fruit(canvasContext))
+      const randomFruit = fruitList[Math.floor(Math.random() * fruitList.length)]
+      const randomFruitSrc = `./assets/fruits/${randomFruit}.png`
+      fruits.push(new Fruit(canvasContext, randomFruitSrc))
       randomInterval = Math.random() * 1000 + 1000
       fruitTimer = 0
     } else {
