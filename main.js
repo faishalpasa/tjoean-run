@@ -49,10 +49,10 @@ window.addEventListener('load', () => {
   }
 
   const handleStatus = (context) => {
-    context.fillStyle = 'black'
     context.font = '10px "Press Start 2P"'
-
+    context.fillStyle = '#006E5A'
     context.fillText(`High Score: ${highScore}`, 10, 20)
+    context.fillStyle = '#001E5E'
     context.fillText(`Score: ${game.score}`, 10, 35)
     game.score = Math.ceil(game.lastTime / 100) + player.totalAdditionalScores
   }

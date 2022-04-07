@@ -112,8 +112,8 @@ export class Player {
   }
 
   handleAdditionalScore = () => {
-    this.gameContext.fillStyle = 'black'
     this.gameContext.font = '10px "Press Start 2P"'
+    this.gameContext.fillStyle = '#E18608'
     if (this.isShowAdditionalScore) {
       if (this.additionalScoreTimeStamp > this.additionalScoreShowDuration) {
         this.additionalScores.splice(0, 1)
