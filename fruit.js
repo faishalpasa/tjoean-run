@@ -1,5 +1,6 @@
 export class Fruit {
-  constructor(canvasContext, imageSrc) {
+  constructor(canvasContext, imageSrc, name) {
+    this.name = name ?? ''
     this.canvasContext = canvasContext
     const image = imageSrc || './assets/fruits/Apple.png'
     this.height = 32
@@ -19,11 +20,11 @@ export class Fruit {
   }
 
   draw(context) {
-    // context.strokeStyle = 'red'
-    // context.strokeRect(this.x, this.y, this.width, this.height)
-    // context.beginPath()
-    // context.arc(this.x + this.height / 2, this.y + this.width / 2, this.width / 2, 0, 2 * Math.PI)
-    // context.stroke()
+    context.strokeStyle = 'red'
+    context.strokeRect(this.x, this.y, this.width, this.height)
+    context.beginPath()
+    context.arc(this.x + this.height / 2, this.y + this.width / 2, this.width / 2, 0, 2 * Math.PI)
+    context.stroke()
 
     context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height)
   }

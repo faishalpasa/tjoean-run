@@ -3,20 +3,26 @@ export class Player {
     this.canvasContext = canvasContext
     this.gameWidth = this.canvasContext.width
     this.gameHeight = this.canvasContext.height
-    this.width = 48
-    this.height = 48
+
+    const image = './assets/characters/Adventurer.png'
+    this.image = new Image()
+    this.image.src = image
+    this.srcWidth = 32
+    this.srcHeight = 32
+    this.playerWidth = 32
+    this.playerHeight = 32
     this.x = 0
-    this.y = this.canvasContext.height - this.height * 2
+    this.y = this.canvasContext.height - this.srcHeight
     this.vy = 0
+
     this.weight = 1
-    this.jumpHeight = 13
-    this.image = document.getElementById('character')
+    this.jumpHeight = 15
     this.speed = 0
     this.maxSpeed = 3
     this.state = 'idle'
     this.frameX = 0
     this.frameY = 0
-    this.maxFrame = 3  // total number of frames in image sprites, start from 0
+    this.maxFrame = 12  // total number of frames in image sprites, start from 0
     this.frame = 0
     this.fps = 10
     this.frameTimer = 0
@@ -30,16 +36,16 @@ export class Player {
   }
 
   draw(context) {
-    // context.strokeStyle = 'red'
-    // context.strokeRect(this.x, this.y, this.width, this.height * 2)
-    // context.beginPath()
-    // context.arc(this.x + this.width / 2, this.y + this.height + this.height / 2, this.width / 2, 0, 2 * Math.PI)
-    // context.stroke()
+    context.strokeStyle = 'red'
+    context.strokeRect(this.x, this.y, this.srcWidth, this.srcHeight)
+    context.beginPath()
+    context.arc(this.x + this.srcHeight / 2, this.y + this.srcWidth / 2, this.srcWidth / 2, 0, 2 * Math.PI)
+    context.stroke()
     this.gameContext = context
-    this.gameContext.drawImage(this.image, this.frameX * this.width, this.frameY * this.height, this.width, this.height, this.x, this.y, this.width * 2, this.height * 2)
+    this.gameContext.drawImage(this.image, this.frameX * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.srcWidth, this.srcHeight)
   }
 
-  update(game, keyboards, deltaTime, fruits) {
+  update(keyboards, deltaTime, fruits) {
     this.x += this.speed
     this.run(keyboards.keys)
     this.jump(keyboards.keys)
@@ -57,11 +63,12 @@ export class Player {
     }
 
     //collision with fruit
-    fruits.forEach(fruit => {
+    fruits.forEach((fruit) => {
       const dx = fruit.x - this.x
       const dy = fruit.y - this.y
       const distance = Math.sqrt(dx * dx + dy * dy)
-      if (distance < fruit.width + this.width) {
+
+      if (distance < this.srcWidth) {
         fruit.isOutOufScreen = true
         // game.isGameOver = true
         this.isShowAdditionalScore = true
@@ -77,30 +84,35 @@ export class Player {
     if (keyboards.includes('ArrowRight')) {
       this.speed = this.maxSpeed
       this.frameY = 1
+      this.maxFrame = 7
     } else if (keyboards.includes('ArrowLeft')) {
       this.speed = -this.maxSpeed
       this.frameY = 1
+      this.maxFrame = 7
     } else {
       this.speed = 0
-      this.frameY = 0 
+      this.frameY = 0
+      this.maxFrame = 12
     }
 
     if (this.x < 0) {
       this.x = 0
     }
-    if (this.x > this.gameWidth - this.width) {
-      this.x = this.gameWidth - this.width
+    if (this.x > this.gameWidth - this.srcWidth) {
+      this.x = this.gameWidth - this.srcWidth
     }
   }
 
   jump(keyboards) {
-    if (keyboards.includes('ArrowUp') && this.landing()) {
+    if ((keyboards.includes('ArrowUp')) && this.landing()) {
       this.vy -= this.jumpHeight
     }
     this.y += this.vy
 
     if (!this.landing()){
       this.vy += this.weight
+      this.frameY = 5
+      this.maxFrame = 5
     } 
     else {
       this.vy = 0
@@ -108,7 +120,7 @@ export class Player {
   }
 
   landing() {
-    return this.y >= this.gameHeight - this.height * 2
+    return this.y >= this.gameHeight - this.srcHeight
   }
 
   handleAdditionalScore = () => {
@@ -123,8 +135,24 @@ export class Player {
         this.additionalScoreTimeStamp += 10
 
         const score = this.additionalScores[0]
-        this.gameContext.fillText(`+${score}`, this.x + this.width / 3, this.y + this.height / 3)
+        this.gameContext.fillText(`+${score}`, this.x, this.y)
       }
+    }
+  }
+
+  click(x, y) {
+    const dx = x - this.x
+    const dy = y - this.y
+    const distance = Math.sqrt(dx * dx + dy * dy)
+
+    console.log({ x, y })
+    console.log({ playerX: this.x, playerY: this.y })
+    console.log({ distance })
+
+    if (distance < (this.srcWidth / 2)) {
+      console.log('click player')
+    } else {
+      console.log('not click player')
     }
   }
 }

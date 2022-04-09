@@ -3,13 +3,16 @@ import { Background } from './background.js'
 import { Fruit } from './fruit.js'
 import { Game } from './game.js'
 import { KeyboardHandler } from './keyboard.js'
+import { Something } from './object.js'
 import { Player } from './player.js'
+import { WIDTH, HEIGHT } from './src/constants/canvas.js'
+import { getCanvasCoordinate } from './src/utils/coordinate.js'
 
 window.addEventListener('load', () => {
-  const canvas = document.getElementById('canvas') 
+  const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
-  const CANVAS_WIDTH = canvas.width = 800
-  const CANVAS_HEIGHT = canvas.height = 400
+  const CANVAS_WIDTH = canvas.width = WIDTH
+  const CANVAS_HEIGHT = canvas.height = HEIGHT
 
   const highScore = localStorage.getItem('tanisquad_run')
 
@@ -28,6 +31,7 @@ window.addEventListener('load', () => {
     new Background(canvasContext, './assets/backgrounds/background4.png', 1),
   ]
   const player = new Player(canvasContext) 
+  const fullscreenButton = new Something(ctx)
 
   let fruits = []
   let fruitTimer = 0
@@ -38,7 +42,7 @@ window.addEventListener('load', () => {
     if (fruitTimer > fruitInterval + randomInterval) {
       const randomFruit = fruitList[Math.floor(Math.random() * fruitList.length)]
       const randomFruitSrc = `./assets/fruits/${randomFruit}.png`
-      fruits.push(new Fruit(canvasContext, randomFruitSrc))
+      fruits.push(new Fruit(canvasContext, randomFruitSrc, randomFruit))
       randomInterval = Math.random() * 1000 + 1000
       fruitTimer = 0
     } else {
@@ -60,6 +64,25 @@ window.addEventListener('load', () => {
     game.score = Math.ceil(game.lastTime / 100) + player.totalAdditionalScores
   }
 
+  const handleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      canvas.requestFullscreen().catch(err => {
+        console.log(err)
+      })
+    } else {
+      document.exitFullscreen()
+    }
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect()
+    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
+
+    if (fullscreenButton.checkClick(x, y)) {
+      handleFullScreen()
+    }
+  })
+
   const animate = (timestamp) => {
     const deltaTime = timestamp - game.lastTime
     game.lastTime = timestamp
@@ -70,9 +93,9 @@ window.addEventListener('load', () => {
       backgroundStack.draw(ctx)
       backgroundStack.update()
     })
-    
+    fullscreenButton.draw()
     player.draw(ctx)
-    player.update(game, keyboard, deltaTime, fruits)
+    player.update(keyboard, deltaTime, fruits)
     
     handleShowFruits(deltaTime)
     handleStatus(ctx)
