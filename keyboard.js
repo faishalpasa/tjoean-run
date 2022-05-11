@@ -8,7 +8,8 @@ export class KeyboardHandler {
       if ((e.key === 'ArrowRight' ||
         e.key === 'ArrowDown' ||
         e.key === 'ArrowLeft' ||
-        e.key === 'ArrowUp') && this.keys.indexOf(e.key) === -1) {
+        e.key === 'ArrowUp' ||
+        e.key === 'Enter') && this.keys.indexOf(e.key) === -1) {
         this.keys.push(e.key)
       }
     })
@@ -16,7 +17,8 @@ export class KeyboardHandler {
       if (e.key === 'ArrowRight' ||
       e.key === 'ArrowDown' ||
       e.key === 'ArrowLeft' ||
-      e.key === 'ArrowUp') {
+      e.key === 'ArrowUp' ||
+      e.key === 'Enter') {
         this.keys.splice(this.keys.indexOf(e.key), 1)
       }
     })

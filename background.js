@@ -25,4 +25,8 @@ export class Background {
       this.x = 0
     }
   }
+
+  restart() {
+    this.x = 0
+  }
 }

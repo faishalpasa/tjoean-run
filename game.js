@@ -10,7 +10,12 @@ export class Game {
     context.fillRect(20, 20, 150, 100)
   }
 
-  update() {
+  update() {}
+
+  restart () {
+    this.score = 0
+    this.isGameOver = false
+    this.lastTime = 0
   }
 
   saveScore() {
