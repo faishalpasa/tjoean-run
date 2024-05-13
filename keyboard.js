@@ -29,6 +29,7 @@ export class KeyboardHandler {
       }
     })
     window.addEventListener('touchmove', (e) => {
+      // const swipeDistance = e.changedTouches[0].pageY - this.touchY
       // if (swipeDistance < -this.touchThreshold && this.keys.indexOf('SwipeUp') === -1) {
       //   this.keys.push('SwipeUp')
       // }

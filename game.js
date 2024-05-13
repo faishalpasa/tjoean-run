@@ -2,6 +2,8 @@ export class Game {
   constructor(canvasContext) {
     this.canvasContext = canvasContext
     this.score = 0
+    this.health = 5
+    this.totalHealth = 5
     this.isGameOver = false
     this.lastTime = 0
   }
@@ -14,14 +16,15 @@ export class Game {
 
   restart () {
     this.score = 0
+    this.health = 5
     this.isGameOver = false
     this.lastTime = 0
   }
 
   saveScore() {
-    const getLatestScore = localStorage.getItem('tanisquad_run')
+    const getLatestScore = localStorage.getItem('tjoean_run')
     if (this.score > getLatestScore) {
-      localStorage.setItem('tanisquad_run', this.score)
+      localStorage.setItem('tjoean_run', this.score)
     }
   }
 }
