@@ -53,12 +53,12 @@ export class KeyboardHandler {
     this.distX = ''
     this.distY = ''
     this.thresholdHorizontal = 1 //required min distance traveled to be considered swipe
-    this.thresholdVertical = 50 //required min distance traveled to be considered swipe
+    this.thresholdVertical = -50 //required min distance traveled to be considered swipe
     this.restraint = 100 // maximum distance allowed at the same time in perpendicular direction
     this.allowedTime = 300 // maximum time allowed to travel that distance
     this.elapsedTime = ''
     this.startTime = ''
-    this.currentPageX = 0
+    this.currentDistY = 0
     // handleswipe = callback || function(swipedir){}
 
     window.addEventListener('touchstart', (e) => {
@@ -74,33 +74,19 @@ export class KeyboardHandler {
       const touchobj = e.changedTouches[0]
       this.distX = touchobj.pageX - this.startX // get horizontal dist traveled by finger while in contact with surface
       this.distY = touchobj.pageY - this.startY // get vertical dist traveled by finger while in contact with surface
-      // this.currentPageY = touchobj.pageY
       this.elapsedTime = new Date().getTime() - this.startTime // get time elapsed
 
-      if (Math.abs(this.distY) > this.thresholdVertical) {
+      console.log(Math.abs(this.distY), this.distY)
+
+      if (this.distY < this.thresholdVertical) {
+        this.startY = 0
         if (this.keys.indexOf('SwipeUp') === -1) {
           this.keys.push('SwipeUp')
           setTimeout(() => {
             this.keys = this.keys.filter(key => key !== 'SwipeUp')
-          }, 200)
+          }, 250)
         }
       }
-
-      // if (this.distX > this.thresholdHorizontal) {
-      //   if (touchobj.pageX >= this.currentPageX) {
-      //     this.currentPageX = touchobj.pageX
-      //     if (this.keys.indexOf('ArrowRight') === -1) {
-      //       this.keys = this.keys.filter(key => key !== 'ArrowLeft')
-      //       this.keys.push('ArrowRight')
-      //     }
-      //   } else {
-      //     this.currentPageX = 0
-      //     if (this.keys.indexOf('ArrowLeft') === -1) {
-      //       this.keys = this.keys.filter(key => key !== 'ArrowRight')
-      //       this.keys.push('ArrowLeft')
-      //     }
-      //   }
-      // }
 
       if (this.distX > this.thresholdHorizontal) {
         if (this.keys.indexOf('ArrowRight') === -1) {
@@ -113,9 +99,6 @@ export class KeyboardHandler {
       this.keys = this.keys.filter(key => key !== 'SwipeUp')
       this.keys = this.keys.filter(key => key !== 'ArrowLeft')
       this.keys = this.keys.filter(key => key !== 'ArrowRight')
-      this.currentPageX = 0
-      console.log(this.keys)
-
     })
   }
 }

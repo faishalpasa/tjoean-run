@@ -286,7 +286,6 @@ export class Player {
   }
 
   jump(keyboards) {
-    // console.log(keyboards)
     if ((keyboards.includes('ArrowUp')) && this.onGround()) {
       this.vy -= this.jumpHeight
     }

@@ -186,8 +186,6 @@ window.addEventListener('load', () => {
     if (!game.isGameOver) {
       requestAnimationFrame(animate)
     }
-
-    console.log(game)
   }
 
   const handleRestartGame = () => {
