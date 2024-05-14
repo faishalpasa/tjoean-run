@@ -33,13 +33,13 @@ export class Enemy {
   }
 
   draw(context) {
-    context.strokeStyle = 'black'
-    context.strokeRect(this.x, this.y, this.enemyWidth, this.enemyHeight)
-    context.beginPath()
-    context.arc(this.x + this.enemyHeight / 2, this.y + this.enemyWidth / 2, this.enemyWidth / 2, 0, 2 * Math.PI)
-    context.stroke()
-
-    // console.log(this.type)
+    // start debug
+    // context.strokeStyle = 'black'
+    // context.strokeRect(this.x, this.y, this.enemyWidth, this.enemyHeight)
+    // context.beginPath()
+    // context.arc(this.x + this.enemyHeight / 2, this.y + this.enemyWidth / 2, this.enemyWidth / 2, 0, 2 * Math.PI)
+    // context.stroke()
+    // end debug
 
     context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.enemyWidth, this.enemyHeight)
   }

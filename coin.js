@@ -35,11 +35,13 @@ export class Coin {
   }
 
   draw(context) {
-    context.strokeStyle = 'red'
-    context.strokeRect(this.x, this.y, this.coinWidth, this.coinHeight)
-    context.beginPath()
-    context.arc(this.x + this.coinHeight / 2, this.y + this.coinWidth / 2, this.coinWidth / 2, 0, 2 * Math.PI)
-    context.stroke()
+    // Start debug
+    // context.strokeStyle = 'red'
+    // context.strokeRect(this.x, this.y, this.coinWidth, this.coinHeight)
+    // context.beginPath()
+    // context.arc(this.x + this.coinHeight / 2, this.y + this.coinWidth / 2, this.coinWidth / 2, 0, 2 * Math.PI)
+    // context.stroke()
+    // end debug
 
     context.drawImage(this.image, this.frameX * this.width, 0, this.width, this.height, this.x, this.y, this.coinWidth, this.coinHeight)
   }

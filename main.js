@@ -37,7 +37,6 @@ window.addEventListener('load', () => {
   const player = new Player(canvasContext) 
   const fullscreenButton = new Something(ctx)
   const health = new Health(canvasContext, game)
-  const keypad = new Keypad(ctx)
 
   let coins = []
   let coinTimer = 0
@@ -67,9 +66,42 @@ window.addEventListener('load', () => {
     coins = coins.filter(coin => !coin.isOutOufScreen)
   }
 
+  const handleSetEnemyInterval = () => {
+    if (game.score < 1000) {
+      return 1000
+    }
+    if (game.score < 2000) {
+      return 800
+    }
+    if (game.score < 3000) {
+      return 600
+    }
+    if (game.score < 4000) {
+      return 400
+    }
+    if (game.score < 5000) {
+      return 200
+    }
+    if (game.score < 6000) {
+      return 100
+    }
+    if (game.score < 7000) {
+      return 50
+    }
+    if (game.score < 8000) {
+      return 25
+    }
+    if (game.score < 9000) {
+      return 10
+    }
+    if (game.score > 10000) {
+      return 5
+    }
+  }
+
   let enemies = []
   let enemyTimer = 0
-  let enemyInterval = 1000
+  let enemyInterval = handleSetEnemyInterval()
   let enemyRandomInterval = Math.random() * 1000 + 100
   const enemyList = [
     // { name: 'spikes-1', maxFrame: 1, position: 'ground', speed: 1 },
@@ -81,6 +113,9 @@ window.addEventListener('load', () => {
     if (enemyTimer > enemyInterval + enemyRandomInterval) {
       const randomEnemy = enemyList[Math.floor(Math.random() * enemyList.length)]
       enemies.push(new Enemy(canvasContext, randomEnemy))
+
+      console.log(handleSetEnemyInterval())
+      enemyInterval = handleSetEnemyInterval()
       enemyRandomInterval = Math.random() * 1000 + 100
       enemyTimer = 0
     } else {
@@ -131,7 +166,7 @@ window.addEventListener('load', () => {
       backgroundStack.update()
     })
 
-    fullscreenButton.draw()
+    // fullscreenButton.draw()
 
     player.draw(ctx)
     player.update(game, keyboard, deltaTime, coins, enemies)
@@ -146,13 +181,13 @@ window.addEventListener('load', () => {
     handleShowEnemies(deltaTime)
     handleStatus(ctx)
 
-    keypad.draw()
-
     game.update()
     game.saveScore()
     if (!game.isGameOver) {
       requestAnimationFrame(animate)
     }
+
+    console.log(game)
   }
 
   const handleRestartGame = () => {
@@ -172,49 +207,15 @@ window.addEventListener('load', () => {
     }
   }
 
-  canvas.addEventListener('click', (e) => {
-    const rect = canvas.getBoundingClientRect()
-    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
+  // canvas.addEventListener('click', (e) => {
+  //   const rect = canvas.getBoundingClientRect()
+  //   const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
 
-    if (fullscreenButton.checkClick(x, y)) {
-      // handleFullScreen()
-      handleRestartGame()
-    }
-  })
-
-  canvas.addEventListener('touchstart', (e) => {
-    const rect = canvas.getBoundingClientRect()
-    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.touches[0].clientX, e.touches[0].clientY, rect.left, rect.top)
-
-    if (keypad.clickLeft(x, y)) {
-      player.run(['ArrowLeft'])
-    }
-
-    if (keypad.clickRight(x, y)) {
-      player.run(['ArrowRight'])
-    }
-
-    if (keypad.clickUp(x, y)) {
-      player.jump(['ArrowUp'])
-    }
-  })
-
-  canvas.addEventListener('touchmove', (e) => {
-    const rect = canvas.getBoundingClientRect()
-    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.touches[0].clientX, e.touches[0].clientY, rect.left, rect.top)
-
-    if (keypad.clickLeft(x, y)) {
-      player.run(['ArrowLeft'])
-    }
-
-    if (keypad.clickRight(x, y)) {
-      player.run(['ArrowRight'])
-    }
-
-    if (keypad.clickUp(x, y)) {
-      player.jump(['ArrowUp'])
-    }
-  })
+  //   if (fullscreenButton.checkClick(x, y)) {
+  //     // handleFullScreen()
+  //     handleRestartGame()
+  //   }
+  // })
 
   animate(0)
 })

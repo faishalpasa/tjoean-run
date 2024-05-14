@@ -6,7 +6,7 @@ export class Health {
     const imageEmpty = './assets/coins/heart1-empty.png'
     this.height = 16
     this.width = 16
-    this.x = this.canvasContext.width - 100
+    this.x = this.canvasContext.width - 40
     this.y = 0
     this.heartHeight = this.height * 2
     this.heartWidth = this.width * 2

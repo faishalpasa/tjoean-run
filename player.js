@@ -95,11 +95,13 @@ export class Player {
 
   draw(context) {
     this.gameContext = context
-    this.gameContext.strokeStyle = 'red'
-    this.gameContext.strokeRect(this.x, this.y, this.playerWidth, this.playerHeight)
-    this.gameContext.beginPath()
-    this.gameContext.arc(this.x + this.playerHeight / 2, this.y + this.playerWidth / 2, this.playerWidth / 2, 0, 2 * Math.PI)
-    this.gameContext.stroke()
+    // start debugging
+    // this.gameContext.strokeStyle = 'red'
+    // this.gameContext.strokeRect(this.x, this.y, this.playerWidth, this.playerHeight)
+    // this.gameContext.beginPath()
+    // this.gameContext.arc(this.x + this.playerHeight / 2, this.y + this.playerWidth / 2, this.playerWidth / 2, 0, 2 * Math.PI)
+    // this.gameContext.stroke()
+    // end debugging
     this.gameContext.drawImage(this.player, (this.startFrame + this.frameX) * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.playerWidth, this.playerHeight)
     // Run Effect
     this.gameContext.drawImage(this.effect, (this.effectStartFrame + this.effectFrameX) * 16, 0, 16, 16, this.x - this.srcWidth / 2, this.y + this.playerHeight / 2, 16, 16)
@@ -188,10 +190,10 @@ export class Player {
       const distance = Math.sqrt(dx * dx + dy * dy)
 
       // start debugging
-      this.gameContext.beginPath()
-      this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
-      this.gameContext.lineTo(coinCoordinateX, coinCoordinateY)
-      this.gameContext.stroke();
+      // this.gameContext.beginPath()
+      // this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
+      // this.gameContext.lineTo(coinCoordinateX, coinCoordinateY)
+      // this.gameContext.stroke()
       // end debugging
 
       if (distance < (this.playerWidth / 2) + (coin.width / 2)) {
@@ -213,11 +215,11 @@ export class Player {
       const distance = Math.sqrt(dx * dx + dy * dy)
 
       // start debugging
-      this.gameContext.beginPath()
-      this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
-      this.gameContext.lineTo(enemyCoordinateX, enemyCoordinateY)
-      this.gameContext.strokeStyle = 'black'
-      this.gameContext.stroke();
+      // this.gameContext.beginPath()
+      // this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
+      // this.gameContext.lineTo(enemyCoordinateX, enemyCoordinateY)
+      // this.gameContext.strokeStyle = 'black'
+      // this.gameContext.stroke()
       // end debugging
 
       if (distance < (this.playerWidth / 2) + (enemy.width / 2)) {
@@ -266,7 +268,7 @@ export class Player {
         this.actionRunLeft()
       }
     } else {
-      this.speed = -this.maxSpeed / 2
+      this.speed = -this.maxSpeed
 
       if (this.state === 'enemy-colation') {
         this.actionColationWithEnemy()
@@ -284,7 +286,11 @@ export class Player {
   }
 
   jump(keyboards) {
+    // console.log(keyboards)
     if ((keyboards.includes('ArrowUp')) && this.onGround()) {
+      this.vy -= this.jumpHeight
+    }
+    if ((keyboards.includes('SwipeUp')) && this.onGround()) {
       this.vy -= this.jumpHeight
     }
     
