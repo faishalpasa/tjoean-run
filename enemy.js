@@ -1,22 +1,22 @@
 import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
 
 export class Enemy {
-  constructor(canvasContext, type) {
+  constructor(canvasContext, enemy) {
     this.canvasContext = canvasContext
-    const image = `./assets/enemies/${type.name}.png`
-    this.type = type.position ?? 'ground'
+    const image = `./assets/enemies/${enemy.name}.png`
+    this.enemy = enemy.position ?? 'ground'
     this.enemyPositionMultiply = 1
-    if (this.type === 'ground') {
+    if (this.enemy === 'ground') {
       this.enemyPositionMultiply = 1
-    } else if (this.type === 'mid') {
+    } else if (this.enemy === 'mid') {
       this.enemyPositionMultiply = 3
-    } else if (this.type === 'fly') {
+    } else if (this.enemy === 'fly') {
       this.enemyPositionMultiply = 5
     }
 
     
-    this.height = 16
-    this.width = 16
+    this.height = enemy.size ?? 16
+    this.width = enemy.size ?? 16
     this.enemyHeight = this.height * 2
     this.enemyWidth = this.width * 2
     this.x = this.canvasContext.width
@@ -24,11 +24,11 @@ export class Enemy {
     this.image = new Image()
     this.image.src = image
     this.frameX = 0
-    this.maxFrame = type.maxFrame  // total number of frames in image sprites, start from 0
+    this.maxFrame = enemy.maxFrame  // total number of frames in image sprites, start from 0
     this.fps = 10
     this.frameTimer = 0
     this.frameInterval = 1000 / this.fps
-    this.speed = type.speed ?? 2
+    this.speed = enemy.speed ?? 2
     this.isOutOufScreen = false
   }
 

@@ -12,6 +12,10 @@ import { Tile } from './tile.js'
 import { Health } from './health.js'
 import { Keypad } from './keypad.js'
 
+const ENEMY_INTERVAL = 2500
+const LEVEL_UP_SCORE = 10000
+const BOSS_APPEAR_SCORE = 5000
+
 window.addEventListener('load', () => {
   const canvas = document.getElementById('canvas')
   const ctx = canvas.getContext('2d')
@@ -27,7 +31,7 @@ window.addEventListener('load', () => {
   
   const keyboard = new KeyboardHandler()
   const game = new Game(canvasContext)
-  const tile = new Tile(canvasContext)
+  const tile = new Tile(canvasContext, game)
   const backgroundStacks = [
     new Background(canvasContext, './assets/backgrounds/background1.png', 0.025),
     new Background(canvasContext, './assets/backgrounds/background2.png', 0.05),
@@ -66,57 +70,31 @@ window.addEventListener('load', () => {
     coins = coins.filter(coin => !coin.isOutOufScreen)
   }
 
-  const handleSetEnemyInterval = () => {
-    if (game.score < 1000) {
-      return 1000
-    }
-    if (game.score < 2000) {
-      return 800
-    }
-    if (game.score < 3000) {
-      return 600
-    }
-    if (game.score < 4000) {
-      return 400
-    }
-    if (game.score < 5000) {
-      return 200
-    }
-    if (game.score < 6000) {
-      return 100
-    }
-    if (game.score < 7000) {
-      return 50
-    }
-    if (game.score < 8000) {
-      return 25
-    }
-    if (game.score < 9000) {
-      return 10
-    }
-    if (game.score > 10000) {
-      return 5
-    }
-  }
-
   let enemies = []
   let enemyTimer = 0
-  let enemyInterval = handleSetEnemyInterval()
+  let enemyInterval = game.enemyInterval
   let enemyRandomInterval = Math.random() * 1000 + 100
-  const enemyList = [
-    // { name: 'spikes-1', maxFrame: 1, position: 'ground', speed: 1 },
-    { name: 'mushroom-walk', maxFrame: 9, position: 'ground', speed: 3 },
-    { name: 'ghost1_fly', maxFrame: 5, position: 'mid', speed: 5 },
-    { name: 'ghost1_fly', maxFrame: 5, position: 'fly', speed: 7 },
-  ]
+  
   const handleShowEnemies = (deltaTime) => {
+    const casualEnemy = [
+      // { name: 'spikes-1', maxFrame: 1, position: 'ground', speed: 1 },
+      { name: 'mushroom-walk', maxFrame: 9, position: 'ground', speed: 3 },
+      { name: 'ghost1_fly', maxFrame: 5, position: 'mid', speed: 5 },
+      { name: 'ghost1_fly', maxFrame: 5, position: 'fly', speed: 7 },
+    ]
+    const bossEnemy = [
+      { name: 'lele', maxFrame: 5, position: 'ground', speed: 1, size: 48 },
+      { name: 'lele', maxFrame: 5, position: 'mid', speed: 3, size: 48 },
+      { name: 'lele', maxFrame: 5, position: 'fly', speed: 5, size: 48 },
+    ]
+    const enemyList = game.isBossAppear ? bossEnemy : casualEnemy
+
     if (enemyTimer > enemyInterval + enemyRandomInterval) {
       const randomEnemy = enemyList[Math.floor(Math.random() * enemyList.length)]
       enemies.push(new Enemy(canvasContext, randomEnemy))
 
-      console.log(handleSetEnemyInterval())
-      enemyInterval = handleSetEnemyInterval()
-      enemyRandomInterval = Math.random() * 1000 + 100
+      enemyInterval = game.enemyInterval
+      enemyRandomInterval = Math.random() * game.enemyInterval + 100
       enemyTimer = 0
     } else {
       enemyTimer += deltaTime
@@ -128,7 +106,44 @@ window.addEventListener('load', () => {
     enemies = enemies.filter(enemy => !enemy.isOutOufScreen)
   }
 
-  let tiles = []
+  const handleEnemyInterval = () => {
+    const bossMultiplier = game.isBossAppear ? 0.5 : 1
+    
+    if (game.score < ENEMY_INTERVAL * 1) {
+      game.enemyInterval = 1000 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 2) {
+      game.enemyInterval = 800 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 3) {
+      game.enemyInterval = 600 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 4) {
+      game.enemyInterval = 400 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 5) {
+      game.enemyInterval = 200 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 6) {
+      game.enemyInterval = 100 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 7) {
+      game.enemyInterval = 50 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 8) {
+      game.enemyInterval = 25 * bossMultiplier
+    } else if (game.score < ENEMY_INTERVAL * 9) {
+      game.enemyInterval = 10 * bossMultiplier
+    } else if (game.score > ENEMY_INTERVAL * 10) {
+      game.enemyInterval = 5 * bossMultiplier
+    }
+  }
+
+  const handleLevelUp = () => {
+    if (game.score > LEVEL_UP_SCORE * game.level) {
+      game.level = game.level + 1
+      game.enemyInterval = 1000
+    }
+  }
+
+  const handleBossApear = () => {
+    if (game.score % BOSS_APPEAR_SCORE > BOSS_APPEAR_SCORE - 500) {
+      game.isBossAppear = true
+    }
+  }
 
   const handleStatus = (context) => {
     game.score = game.score += 1
@@ -159,11 +174,10 @@ window.addEventListener('load', () => {
     game.lastTime = timestamp
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
-
     
-    backgroundStacks.forEach(backgroundStack => {
-      backgroundStack.draw(ctx)
-      backgroundStack.update()
+    backgroundStacks.forEach((backgroundStack, idx) => {
+      backgroundStack.draw(ctx, game)
+      backgroundStack.update(idx, game)
     })
 
     // fullscreenButton.draw()
@@ -180,6 +194,10 @@ window.addEventListener('load', () => {
     handleShowCoins(deltaTime)
     handleShowEnemies(deltaTime)
     handleStatus(ctx)
+
+    handleLevelUp()
+    handleBossApear()
+    handleEnemyInterval()
 
     game.update()
     game.saveScore()

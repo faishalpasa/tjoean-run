@@ -1,4 +1,3 @@
-import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
 export class Background {
   constructor(canvasContext, backgroundSrc, backgroundSpeed) {
     this.canvasContext = canvasContext
@@ -21,7 +20,18 @@ export class Background {
     context.drawImage(this.image, this.x + this.width - this.speed, this.y, this.width, this.height)
   }
 
-  update () { 
+  update (backgroundStackIndex, game) { 
+    if (game.isBossAppear && backgroundStackIndex === 0) {
+      this.speed = 1
+      this.image.src = './assets/backgrounds/background1-boss.png'
+
+      setTimeout(() => {
+        this.speed = 0.025
+        this.image.src = './assets/backgrounds/background1.png'
+        game.isBossAppear = false
+      }, 10000)
+    }
+
     this.x -= this.speed
     if (this.x < 0 - this.width) {
       this.x = 0

@@ -76,8 +76,6 @@ export class KeyboardHandler {
       this.distY = touchobj.pageY - this.startY // get vertical dist traveled by finger while in contact with surface
       this.elapsedTime = new Date().getTime() - this.startTime // get time elapsed
 
-      console.log(this.startY, this.distY)
-
       if (this.distY < this.thresholdVertical) {
         if (this.keys.indexOf('SwipeUp') === -1) {
           this.startY = touchobj.pageY
@@ -91,6 +89,12 @@ export class KeyboardHandler {
       if (this.distX > this.thresholdHorizontal) {
         if (this.keys.indexOf('ArrowRight') === -1) {
           this.keys.push('ArrowRight')
+        }
+      }
+
+      if (this.distX < this.thresholdHorizontal) {
+        if (this.keys.indexOf('ArrowLeft') === -1) {
+          this.keys.push('ArrowLeft')
         }
       }
     })

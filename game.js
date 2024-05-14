@@ -5,7 +5,10 @@ export class Game {
     this.health = 5
     this.totalHealth = 5
     this.isGameOver = false
+    this.isBossAppear = false
+    this.enemyInterval = 1000
     this.lastTime = 0
+    this.level = 1
   }
 
   draw(context) {
@@ -18,7 +21,9 @@ export class Game {
     this.score = 0
     this.health = 5
     this.isGameOver = false
+    this.isBossAppear = false
     this.lastTime = 0
+    this.level = 1
   }
 
   saveScore() {
