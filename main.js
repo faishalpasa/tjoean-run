@@ -383,18 +383,18 @@ window.addEventListener('load', () => {
     }
   })
 
-  canvas.addEventListener("touchmove", (e) => {
-    const rect = canvas.getBoundingClientRect()
-    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
+  // canvas.addEventListener("touchmove", (e) => {
+  //   const rect = canvas.getBoundingClientRect()
+  //   const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
 
-    if (keypad.clickLeftKeypad(x, y)) {
-      if (keyboard.keys.indexOf('ArrowRight') === -1) {
-        keyboard.keys.push('ArrowRight')
-      }
-    } else {
-      keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
-    }
-  })
+  //   if (keypad.clickLeftKeypad(x, y)) {
+  //     if (keyboard.keys.indexOf('ArrowRight') === -1) {
+  //       keyboard.keys.push('ArrowRight')
+  //     }
+  //   } else {
+  //     keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
+  //   }
+  // })
 
   canvas.addEventListener("touchend", (e) => {
     const rect = canvas.getBoundingClientRect()
