@@ -11,7 +11,7 @@ export class Background {
     this.y = 0
     this.isLandscape = this.canvasContext.width > this.canvasContext.height
     this.width = this.canvasContext.width
-    this.height = this.isLandscape ? this.canvasContext.width / 2 : this.canvasContext.height
+    this.height = this.canvasContext.height
     this.speed = speed
   }
 

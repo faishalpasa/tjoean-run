@@ -265,7 +265,7 @@ window.addEventListener('load', () => {
   const buttonWidth = boxWidth * 0.5
   const buttonHeight = buttonWidth * 0.33
   const buttonX = (WIDTH - buttonWidth) * 0.5
-  const buttonY = (HEIGHT - buttonHeight) * 0.8
+  const buttonY = (HEIGHT - boxHeight) + buttonHeight
 
   let startMenuAnimation
 
