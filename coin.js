@@ -1,8 +1,9 @@
 import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
 
 export class Coin {
-  constructor(canvasContext, imageSrc, name, maxFrame = 9, additionalScore = 100, position = 'ground') {
-    this.name = name ?? ''
+  constructor(canvasContext, coin = { name: '', maxFrame: 9, additionalScore: 100, type: 'coin'}, imageSrc, position = 'ground') {
+    this.name = coin.name
+    this.type = coin.type
     this.position = position
     this.coinPositionMultiply = 1
     if (this.position === 'ground') {
@@ -25,13 +26,13 @@ export class Coin {
     this.image = new Image()
     this.image.src = image
     this.frameX = 0
-    this.maxFrame = maxFrame || 16  // total number of frames in image sprites, start from 0
+    this.maxFrame = coin.maxFrame
     this.fps = 10
     this.frameTimer = 0
     this.frameInterval = 1000 / this.fps
     this.speed = 2
     this.isOutOufScreen = false
-    this.additionalScore = additionalScore
+    this.additionalScore = coin.additionalScore
   }
 
   draw(context) {

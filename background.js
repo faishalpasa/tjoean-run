@@ -21,16 +21,17 @@ export class Background {
   }
 
   update (backgroundStackIndex, game) { 
-    if (game.isBossAppear && backgroundStackIndex === 0) {
-      this.speed = 1
-      this.image.src = './assets/backgrounds/background1-boss.png'
-
-      setTimeout(() => {
+    if (backgroundStackIndex === 0) {
+      if (game.isBossAppear) {
+        this.speed = 1
+        this.image.src = './assets/backgrounds/background1-boss.png'
+      } else {
         this.speed = 0.025
         this.image.src = './assets/backgrounds/background1.png'
-        game.isBossAppear = false
-      }, 10000)
-    }
+      }
+    } 
+
+    // console.log(game.isBossAppear)
 
     this.x -= this.speed
     if (this.x < 0 - this.width) {

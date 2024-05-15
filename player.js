@@ -152,8 +152,7 @@ export class Player {
   
   // End action event
 
-
-  update(game, keyboards, deltaTime, coins, enemies) {
+  update(game, keyboards, deltaTime, coins, enemies, powerUps) {
     this.x += this.speed
     this.run(keyboards.keys)
     this.jump(keyboards.keys)
@@ -201,6 +200,35 @@ export class Player {
         this.isShowAdditionalScore = true
         this.additionalScores.push(coin.additionalScore)
         game.score += coin.additionalScore
+      }
+    })
+
+    //collision with powerUp
+    powerUps.forEach((powerUp) => {
+      const playerCoordinateX = this.x + this.playerWidth / 2
+      const playerCoordinateY = this.y + this.playerHeight / 2
+      const coinCoordinateX = powerUp.x + powerUp.coinWidth / 2
+      const coinCoordinateY = powerUp.y + powerUp.coinHeight / 2
+      const dx = coinCoordinateX - playerCoordinateX
+      const dy = coinCoordinateY - playerCoordinateY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+
+      // start debugging
+      // this.gameContext.beginPath()
+      // this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
+      // this.gameContext.lineTo(coinCoordinateX, coinCoordinateY)
+      // this.gameContext.stroke()
+      // end debugging
+
+      if (distance < (this.playerWidth / 2) + (powerUp.width / 2)) {
+        powerUp.isOutOufScreen = true
+        this.isShowAdditionalScore = true
+        this.additionalScores.push(powerUp.additionalScore)
+        game.score += powerUp.additionalScore
+        console.log(game.health, powerUp)
+        if (powerUp.type === 'health') {
+          game.health += 1
+        }
       }
     })
 

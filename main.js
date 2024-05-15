@@ -10,11 +10,13 @@ import { WIDTH, HEIGHT } from './src/constants/canvas.js'
 import { getCanvasCoordinate } from './src/utils/coordinate.js'
 import { Tile } from './tile.js'
 import { Health } from './health.js'
+import { Boss } from './boss.js'
 import { Keypad } from './keypad.js'
 
 const ENEMY_INTERVAL = 2500
+const BOSS_APPEAR_TIMER = 10000
+const BOSS_DISAPPEAR_TIMER = 30000 // 60000
 const LEVEL_UP_SCORE = 10000
-const BOSS_APPEAR_SCORE = 5000
 
 window.addEventListener('load', () => {
   const canvas = document.getElementById('canvas')
@@ -41,6 +43,7 @@ window.addEventListener('load', () => {
   const player = new Player(canvasContext) 
   const fullscreenButton = new Something(ctx)
   const health = new Health(canvasContext, game)
+  const boss = new Boss(canvasContext, { name: 'boss-1', size: 160, maxFrame: 0, additionalScore: 1000, sizeMultipler: 1.5 })
 
   let coins = []
   let coinTimer = 0
@@ -57,8 +60,8 @@ window.addEventListener('load', () => {
       const randomCoin = coinList[Math.floor(Math.random() * coinList.length)]
       const randomCoinPosition = coinPosition[Math.floor(Math.random() * coinPosition.length)]
       const randomCoinSrc = `./assets/coins/${randomCoin.name}.png`
-      coins.push(new Coin(canvasContext, randomCoinSrc, randomCoin.name, randomCoin.maxFrame, randomCoin.additionalScore, randomCoinPosition))
-      coinRandomInterval = Math.random() * 1000 + 1000
+      coins.push(new Coin(canvasContext, randomCoin, randomCoinSrc, randomCoinPosition))
+      coinRandomInterval = Math.random() * 5000
       coinTimer = 0
     } else {
       coinTimer += deltaTime
@@ -68,6 +71,32 @@ window.addEventListener('load', () => {
       coin.update(deltaTime)
     })
     coins = coins.filter(coin => !coin.isOutOufScreen)
+  }
+
+  let powerUps = []
+  let powerUpsTimer = 0
+  let powerUpsInterval = 20000
+  let powerUpsnRandomInterval = Math.random() * 1000 + 1000
+  const powerUpsList = [
+    { name: 'heart2-shine', maxFrame: 5, additionalScore: 1000, type: 'health' },
+  ]
+  const powerUpsPosition = ['ground', 'mid', 'fly']
+  const handleShowPowerUps = (deltaTime) => {
+    if (powerUpsTimer > powerUpsInterval + powerUpsnRandomInterval) {
+      const randomPowerUp = powerUpsList[Math.floor(Math.random() * powerUpsList.length)]
+      const randomPowerUpPosition = powerUpsPosition[Math.floor(Math.random() * powerUpsPosition.length)]
+      const randomPowerUpSrc = `./assets/power_ups/${randomPowerUp.name}.png`
+      powerUps.push(new Coin(canvasContext, randomPowerUp, randomPowerUpSrc, randomPowerUpPosition))
+      powerUpsInterval = Math.random() * 10000 + 20000
+      powerUpsTimer = 0
+    } else {
+      powerUpsTimer += deltaTime
+    }
+    powerUps.forEach(powerUp => {
+      powerUp.draw(ctx)
+      powerUp.update(deltaTime)
+    })
+    powerUps = powerUps.filter(powerUp => !powerUp.isOutOufScreen)
   }
 
   let enemies = []
@@ -138,10 +167,27 @@ window.addEventListener('load', () => {
     }
   }
 
-  const handleBossApear = () => {
-    if (game.score % BOSS_APPEAR_SCORE > BOSS_APPEAR_SCORE - 500) {
+  let bossAppearTimer = 0
+  let bossDisapearTimer = 0
+  const handleBossApear = (deltaTime) => {
+    // if (game.score % BOSS_APPEAR_SCORE > BOSS_APPEAR_SCORE - 500) {
+    //   console.log(game.isBossAppear, game.score % BOSS_APPEAR_SCORE, BOSS_APPEAR_SCORE - 500)
+    //   game.isBossAppear = true
+    // }
+
+    if (bossDisapearTimer > BOSS_DISAPPEAR_TIMER) {
       game.isBossAppear = true
+      // bossDisapearTimer = 0
+      bossAppearTimer += deltaTime
+      if (bossAppearTimer > BOSS_APPEAR_TIMER) {
+        game.isBossAppear = false
+        bossAppearTimer = 0
+        bossDisapearTimer = 0
+      }
+    } else {
+      bossDisapearTimer += deltaTime
     }
+    console.log(bossDisapearTimer, bossAppearTimer)
   }
 
   const handleStatus = (context) => {
@@ -182,7 +228,7 @@ window.addEventListener('load', () => {
     // fullscreenButton.draw()
 
     player.draw(ctx)
-    player.update(game, keyboard, deltaTime, coins, enemies)
+    player.update(game, keyboard, deltaTime, coins, enemies, powerUps)
 
     tile.draw(ctx)
     tile.update()
@@ -192,10 +238,14 @@ window.addEventListener('load', () => {
     
     handleShowCoins(deltaTime)
     handleShowEnemies(deltaTime)
+    handleShowPowerUps(deltaTime)
     handleStatus(ctx)
 
+    boss.draw(ctx)
+    boss.update(game)
+
     handleLevelUp()
-    handleBossApear()
+    handleBossApear(deltaTime)
     handleEnemyInterval()
 
     game.update()
