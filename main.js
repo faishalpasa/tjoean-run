@@ -274,49 +274,40 @@ window.addEventListener('load', () => {
     }
   }
 
-  canvas.addEventListener('click', (e) => {
-    const rect = canvas.getBoundingClientRect()
-    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
 
-    if (keypad.clickRightKeypad(x, y)) {
-      if (keyboard.keys.indexOf('ArrowUp') === -1) {
-        keyboard.keys.push('ArrowUp')
+  // canvas.addEventListener('click', (e) => {
+  //   const rect = canvas.getBoundingClientRect()
+  //   const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
 
-        setTimeout(() => {
-          keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowUp')
-        }, 100)
-      }
-    }
-  })
+  //   if (fullscreenButton.checkClick(x, y)) {
+  //     // handleFullScreen()
+  //     handleRestartGame()
+  //   }
+  // })
 
   canvas.addEventListener("touchstart", (e) => {
     const rect = canvas.getBoundingClientRect()
     const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
 
     if (keypad.clickLeftKeypad(x, y)) {
-      if (keyboard.keys.indexOf('ArrowRight') === -1) {
-        keyboard.keys.push('ArrowRight')
-      }
-    }
-  })
-
-  canvas.addEventListener("touchmove", (e) => {
-    const rect = canvas.getBoundingClientRect()
-    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
-    
-    if (keypad.clickLeftKeypad(x, y)) {
-      console.log(x, y)
       // console.log('click left')
       if (keyboard.keys.indexOf('ArrowRight') === -1) {
         keyboard.keys.push('ArrowRight')
       }
-    } else {
-      keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
+    }
+
+    if (keypad.clickRightKeypad(x, y)) {
+      if (keyboard.keys.indexOf('ArrowUp') === -1) {
+        keyboard.keys.push('ArrowUp')
+      }
+      setTimeout(() => {
+        keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowUp')
+      }, 100)
     }
   })
 
   canvas.addEventListener("touchend", (e) => {
-    keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowUp')
+    keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
   })
 
   animate(0)
