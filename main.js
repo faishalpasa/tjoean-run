@@ -290,7 +290,6 @@ window.addEventListener('load', () => {
     const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
 
     if (keypad.clickLeftKeypad(x, y)) {
-      // console.log('click left')
       if (keyboard.keys.indexOf('ArrowRight') === -1) {
         keyboard.keys.push('ArrowRight')
       }
@@ -307,7 +306,12 @@ window.addEventListener('load', () => {
   })
 
   canvas.addEventListener("touchend", (e) => {
-    keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
+    const rect = canvas.getBoundingClientRect()
+    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
+
+    if (keypad.clickLeftKeypad(x, y)) {
+      keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
+    }
   })
 
   animate(0)
