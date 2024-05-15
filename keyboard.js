@@ -92,11 +92,11 @@ export class KeyboardHandler {
         }
       }
 
-      if (this.distX < this.thresholdHorizontal) {
-        if (this.keys.indexOf('ArrowLeft') === -1) {
-          this.keys.push('ArrowLeft')
-        }
-      }
+      // if (this.distX < this.thresholdHorizontal) {
+      //   if (this.keys.indexOf('ArrowLeft') === -1) {
+      //     this.keys.push('ArrowLeft')
+      //   }
+      // }
     })
 
     window.addEventListener('touchend', (e) => {

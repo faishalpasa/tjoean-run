@@ -14,11 +14,11 @@ export class Enemy {
       this.enemyPositionMultiply = 5
     }
 
-    
+    this.sizeMultipler = enemy.sizeMultipler ?? 2
     this.height = enemy.size ?? 16
     this.width = enemy.size ?? 16
-    this.enemyHeight = this.height * 2
-    this.enemyWidth = this.width * 2
+    this.enemyHeight = this.height * this.sizeMultipler
+    this.enemyWidth = this.width * this.sizeMultipler
     this.x = this.canvasContext.width
     this.y = this.canvasContext.height - (this.enemyHeight * this.enemyPositionMultiply) - TILE_HEIGHT * TILE_MULTIPLIER
     this.image = new Image()

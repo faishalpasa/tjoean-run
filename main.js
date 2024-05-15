@@ -83,9 +83,8 @@ window.addEventListener('load', () => {
       { name: 'ghost1_fly', maxFrame: 5, position: 'fly', speed: 7 },
     ]
     const bossEnemy = [
-      { name: 'lele', maxFrame: 5, position: 'ground', speed: 1, size: 48 },
-      { name: 'lele', maxFrame: 5, position: 'mid', speed: 3, size: 48 },
-      { name: 'lele', maxFrame: 5, position: 'fly', speed: 5, size: 48 },
+      { name: 'lele', maxFrame: 5, position: 'ground', speed: 7, size: 48, sizeMultipler: 2 },
+      { name: 'lele', maxFrame: 5, position: 'mid', speed: 9, size: 48, sizeMultipler: 2  },
     ]
     const enemyList = game.isBossAppear ? bossEnemy : casualEnemy
 

@@ -268,7 +268,7 @@ export class Player {
         this.actionRunLeft()
       }
     } else {
-      this.speed = 0
+      this.speed = -this.maxSpeed
 
       if (this.state === 'enemy-colation') {
         this.actionColationWithEnemy()
