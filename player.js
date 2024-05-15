@@ -85,6 +85,7 @@ export class Player {
     this.frame = 0 // Not Used
     this.fps = 10
     this.frameTimer = 0
+    this.invincibleTimer = 0
     this.frameInterval = 1000 / this.fps
 
     this.additionalScores = []
@@ -158,7 +159,7 @@ export class Player {
     this.jump(keyboards.keys)
 
     // animate
-    if (this. frameTimer > this.frameInterval) {
+    if (this.frameTimer > this.frameInterval) {
       // player
       if (this.frameX >= this.maxFrame) {
         this.frameX = 0
@@ -232,6 +233,8 @@ export class Player {
       }
     })
 
+    this.invincibleTimer += deltaTime
+
     //collision with enemies
     enemies.forEach((enemy) => {
       const playerCoordinateX = this.x + this.playerWidth / 2
@@ -253,12 +256,16 @@ export class Player {
       if (distance < (this.playerWidth / 2) + (enemy.width / 2)) {
         if (this.state !== 'enemy-colation') {
           this.state = 'enemy-colation'
-          game.health -= 1
+
+          if (this.invincibleTimer > 500) {
+            game.health -= 1
+            this.invincibleTimer = 0
+          }
 
           if (game.health < 1) {
             setTimeout(() => {
               game.isGameOver = true
-            }, 250)
+            }, 100)
           }
         }
       }

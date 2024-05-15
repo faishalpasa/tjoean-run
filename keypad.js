@@ -1,10 +1,14 @@
 import { WIDTH, HEIGHT } from './src/constants/canvas.js'
+import { isPotrait } from './src/utils/canvas.js'
 
 export class Keypad {
   constructor(context) {
     this.context = context
-    this.width = 50
-    this.height = 50
+    this.width = isPotrait() ? 0.2 * WIDTH : 0.2 * HEIGHT
+    this.height = this.width
+
+    // this.width = 50
+    // this.height = 50
 
     this.keypadRightX = WIDTH - this.width
     this.keypadRightY = HEIGHT - this.height
@@ -21,7 +25,7 @@ export class Keypad {
     this.context.arc(this.keypadRightX + this.height / 2, this.keypadRightY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
     this.context.stroke()
     this.context.font = '8px "Press Start 2P"'
-    this.context.fillText(`Dash`, 8, HEIGHT - this.height / 2 + 4)
+    this.context.fillText(`Dash`, WIDTH / 32, HEIGHT - this.height / 2 + 4)
     this.context.restore()
 
     // Right Keypad

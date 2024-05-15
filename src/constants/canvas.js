@@ -1,4 +1,4 @@
-const isMobile = !!navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
+export const isMobile = !!navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
 
 export const WIDTH = isMobile ? window.innerWidth : 800
 export const HEIGHT = isMobile ? window.innerHeight : 400
