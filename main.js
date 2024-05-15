@@ -12,6 +12,7 @@ import { Tile } from './tile.js'
 import { Health } from './health.js'
 import { Boss } from './boss.js'
 import { Keypad } from './keypad.js'
+import { isPotrait, isInsideRect } from './src/utils/canvas.js'
 
 const ENEMY_INTERVAL = 2500
 const BOSS_APPEAR_TIMER = 10000
@@ -171,14 +172,8 @@ window.addEventListener('load', () => {
   let bossAppearTimer = 0
   let bossDisapearTimer = 0
   const handleBossApear = (deltaTime) => {
-    // if (game.score % BOSS_APPEAR_SCORE > BOSS_APPEAR_SCORE - 500) {
-    //   console.log(game.isBossAppear, game.score % BOSS_APPEAR_SCORE, BOSS_APPEAR_SCORE - 500)
-    //   game.isBossAppear = true
-    // }
-
     if (bossDisapearTimer > BOSS_DISAPPEAR_TIMER) {
       game.isBossAppear = true
-      // bossDisapearTimer = 0
       bossAppearTimer += deltaTime
       if (bossAppearTimer > BOSS_APPEAR_TIMER) {
         game.isBossAppear = false
@@ -192,16 +187,14 @@ window.addEventListener('load', () => {
 
   const handleStatus = (context) => {
     game.score = game.score += 1
+    
+    // context.save()
     context.font = '10px "Press Start 2P"'
     context.fillStyle = '#006E5A'
     context.fillText(`High Score: ${highScore}`, 10, 20)
     context.fillStyle = '#001E5E'
     context.fillText(`Score: ${game.score}`, 10, 35)
-
-    if (game.isGameOver) {
-      context.textAlign = 'center'
-      context.fillText(`Game Over`, WIDTH / 2, HEIGHT / 2)
-    }
+    // context.restore()
   }
 
   const handleFullScreen = () => {
@@ -214,11 +207,14 @@ window.addEventListener('load', () => {
     }
   }
 
-  const animate = (timestamp) => {
+  // Start Game
+  let startGameAnimation
+
+  const startGame = (timestamp) => {
     const deltaTime = timestamp - game.lastTime
     game.lastTime = timestamp
 
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+    ctx.clearRect(0, 0, WIDTH, HEIGHT)
     
     backgroundStacks.forEach((backgroundStack, idx) => {
       backgroundStack.draw(ctx, game)
@@ -252,14 +248,76 @@ window.addEventListener('load', () => {
 
     game.update()
     game.saveScore()
-    if (!game.isGameOver) {
-      requestAnimationFrame(animate)
+    if (game.isGameOver) {
+      cancelAnimationFrame(startGameAnimation)
+      startMenu(0)
+    } else {
+      startGameAnimation = requestAnimationFrame(startGame)
     }
+  }
+
+  // Start Menu
+  const boxWidth = isPotrait() ? WIDTH * 0.8 : HEIGHT * 0.8
+  const boxHeight = boxWidth
+  const boxX = (WIDTH - boxWidth) / 2
+  const boxY = (HEIGHT - boxHeight) / 2
+
+  const buttonWidth = boxWidth * 0.5
+  const buttonHeight = buttonWidth * 0.33
+  const buttonX = (WIDTH - buttonWidth) * 0.5
+  const buttonY = (HEIGHT - buttonHeight) * 0.8
+
+  let startMenuAnimation
+
+  const startMenu = (timestamp) => {
+    const deltaTime = timestamp - game.lastTime
+    game.lastTime = timestamp
+
+    if (!game.isPlaying) {
+      ctx.clearRect(0, 0, WIDTH, HEIGHT)
+    }
+
+    backgroundStacks.forEach((backgroundStack, idx) => {
+      backgroundStack.draw(ctx, game)
+      backgroundStack.update(idx, game)
+    })
+
+    const boxImage = new Image()
+
+    boxImage.src = './assets/gui/box.png'
+    ctx.drawImage(boxImage, boxX, boxY, boxWidth, boxHeight)
+
+    const buttonImage = new Image()
+    buttonImage.src = './assets/gui/button-large-round.png'
+    ctx.drawImage(buttonImage, buttonX, buttonY, buttonWidth, buttonHeight)
+
+    ctx.save()
+    if (game.isGameOver && game.isPlaying) {
+      ctx.textAlign = 'center'
+      ctx.fillText(`Game Over`, WIDTH / 2, HEIGHT / 2)
+      ctx.fillText(`Score: ${game.score}`, WIDTH / 2, HEIGHT / 2 + 20)
+
+      ctx.font = '12px "Press Start 2P"'
+      ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + 32)
+    } else {
+      ctx.fillStyle = '#006E5A'
+      ctx.textAlign = 'center'
+      ctx.font = '12px "Press Start 2P"'
+      ctx.fillText(`Tjoean Run`, WIDTH * 0.5, boxY + 32)
+      ctx.font = '8px "Press Start 2P"'
+      ctx.fillText(`Gunakan mode landscape`, WIDTH * 0.5, boxY + 64)
+      ctx.fillText(`biar lebih enak.`, WIDTH * 0.5, boxY + 64 + 16)
+  
+      ctx.font = '12px "Press Start 2P"'
+      ctx.fillText(`Gas Main`, WIDTH * 0.5, buttonY + 32)
+    }
+    ctx.restore()
+
+    startMenuAnimation = requestAnimationFrame(startMenu)
   }
 
   const handleRestartGame = () => {
     game.score = 0
-    console.log(game)
     if (game.isGameOver) {
       game.restart()
       player.restart()
@@ -270,20 +328,40 @@ window.addEventListener('load', () => {
       coinTimer = 0
       enemies = []
       enemyTimer = 0
-      animate(0) 
+      bossAppearTimer = 0
+      bossDisapearTimer = 0
+      startGame(0)
     }
   }
 
+  const handleRequestFullScreen = () => {
+    if (canvas.requestFullscreen) {
+      canvas.requestFullscreen()
+    } else if (canvas.webkitRequestFullscreen) {
+      canvas.webkitRequestFullscreen()
+    } else if (canvas.mozRequestFullScreen) {
+      canvas.mozRequestFullScreen()
+    } else if (canvas.msRequestFullscreen) {
+      canvas.msRequestFullscreen()
+    }
+  }
 
-  // canvas.addEventListener('click', (e) => {
-  //   const rect = canvas.getBoundingClientRect()
-  //   const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect()
+    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
+  
+    if (isInsideRect({x, y}, { x: buttonX, y: buttonY, width: buttonWidth, height: buttonHeight })) {
+      handleRequestFullScreen()
+      cancelAnimationFrame(startMenuAnimation)
+      game.isPlaying = true
 
-  //   if (fullscreenButton.checkClick(x, y)) {
-  //     // handleFullScreen()
-  //     handleRestartGame()
-  //   }
-  // })
+      if (game.isGameOver) {
+        handleRestartGame()
+      } else {
+        startGame(0)
+      }
+    }
+  });
 
   canvas.addEventListener("touchstart", (e) => {
     const rect = canvas.getBoundingClientRect()
@@ -305,6 +383,19 @@ window.addEventListener('load', () => {
     }
   })
 
+  canvas.addEventListener("touchmove", (e) => {
+    const rect = canvas.getBoundingClientRect()
+    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
+
+    if (keypad.clickLeftKeypad(x, y)) {
+      if (keyboard.keys.indexOf('ArrowRight') === -1) {
+        keyboard.keys.push('ArrowRight')
+      }
+    } else {
+      keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
+    }
+  })
+
   canvas.addEventListener("touchend", (e) => {
     const rect = canvas.getBoundingClientRect()
     const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
@@ -313,6 +404,7 @@ window.addEventListener('load', () => {
       keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
     }
   })
-
-  animate(0)
+  
+  // startGame(0)
+  startMenu(0)
 })

@@ -7,9 +7,6 @@ export class Keypad {
     this.width = isPotrait() ? 0.2 * WIDTH : 0.2 * HEIGHT
     this.height = this.width
 
-    // this.width = 50
-    // this.height = 50
-
     this.keypadRightX = WIDTH - this.width
     this.keypadRightY = HEIGHT - this.height
 

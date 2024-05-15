@@ -4,6 +4,7 @@ export class Game {
     this.score = 0
     this.health = 5
     this.totalHealth = 5
+    this.isPlaying = false
     this.isGameOver = false
     this.isBossAppear = false
     this.enemyInterval = 1000
