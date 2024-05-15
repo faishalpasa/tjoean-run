@@ -44,6 +44,7 @@ window.addEventListener('load', () => {
   const fullscreenButton = new Something(ctx)
   const health = new Health(canvasContext, game)
   const boss = new Boss(canvasContext, { name: 'boss-1', size: 160, maxFrame: 0, additionalScore: 1000, sizeMultipler: 1.5 })
+  const keypad = new Keypad(ctx)
 
   let coins = []
   let coinTimer = 0
@@ -187,7 +188,6 @@ window.addEventListener('load', () => {
     } else {
       bossDisapearTimer += deltaTime
     }
-    console.log(bossDisapearTimer, bossAppearTimer)
   }
 
   const handleStatus = (context) => {
@@ -248,6 +248,8 @@ window.addEventListener('load', () => {
     handleBossApear(deltaTime)
     handleEnemyInterval()
 
+    keypad.draw(ctx)
+
     game.update()
     game.saveScore()
     if (!game.isGameOver) {
@@ -281,6 +283,29 @@ window.addEventListener('load', () => {
   //     handleRestartGame()
   //   }
   // })
+
+  canvas.addEventListener("touchstart", (e) => {
+    const rect = canvas.getBoundingClientRect()
+    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
+
+    if (keypad.clickLeftKeypad(x, y)) {
+      // console.log('click left')
+      if (keyboard.keys.indexOf('ArrowRight') === -1) {
+        keyboard.keys.push('ArrowRight')
+      }
+    }
+
+    if (keypad.clickRightKeypad(x, y)) {
+      if (keyboard.keys.indexOf('ArrowUp') === -1) {
+        keyboard.keys.push('ArrowUp')
+      }
+    }
+  })
+
+  canvas.addEventListener("touchend", (e) => {
+    keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
+    keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowUp')
+  })
 
   animate(0)
 })
