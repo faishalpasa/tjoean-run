@@ -462,12 +462,6 @@ window.addEventListener('load', () => {
         handleRestartGame()
       } 
     }
-
-    if (keypad.clickRightKeypad(x, y)) {
-      if (!keyboard.keys.includes(JUMP)) {
-        keyboard.keys.push(JUMP)
-      }
-    }
   });
 
   canvas.addEventListener("touchstart", (e) => {
@@ -477,6 +471,12 @@ window.addEventListener('load', () => {
     if (keypad.clickLeftKeypad(x, y)) {
       if (!keyboard.keys.includes(DASH)) {
         keyboard.keys.push(DASH)
+      }
+    }
+
+    if (keypad.clickRightKeypad(x, y)) {
+      if (!keyboard.keys.includes(JUMP)) {
+        keyboard.keys.push(JUMP)
       }
     }
   })
