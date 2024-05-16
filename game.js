@@ -10,6 +10,9 @@ export class Game {
     this.enemyInterval = 1000
     this.lastTime = 0
     this.level = 1
+
+    // companion
+    this.companion = null
   }
 
   draw(context) {
@@ -25,6 +28,7 @@ export class Game {
     this.isBossAppear = false
     this.lastTime = 0
     this.level = 1
+    this.companionName = ''
   }
 
   saveScore() {

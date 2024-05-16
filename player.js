@@ -1,3 +1,4 @@
+import { HEIGHT, WIDTH } from './src/constants/canvas.js'
 import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
 import { DASH, JUMP } from './src/constants/action.js'
 
@@ -46,11 +47,11 @@ const EFFECT_STATE = {
 }
 
 export class Player {
-  constructor(canvasContext) {
-    this.canvasContext = canvasContext
-    this.gameContext = null
-    this.gameWidth = this.canvasContext.width
-    this.gameHeight = this.canvasContext.height
+  constructor(context, game) {
+    this.context = context
+    this.gameContext = game
+    this.gameWidth = WIDTH
+    this.gameHeight = HEIGHT
 
     this.player = new Image()
     this.player.src = IMAGE_PLAYER
@@ -62,7 +63,7 @@ export class Player {
     this.effectWidth = 16
     this.effectHeight = 16
     
-    this.initialPlayerY = this.canvasContext.height - this.srcHeight + 8 - TILE_HEIGHT - TILE_HEIGHT * TILE_MULTIPLIER
+    this.initialPlayerY = this.gameHeight - this.srcHeight + 8 - TILE_HEIGHT - TILE_HEIGHT * TILE_MULTIPLIER
     this.playerWidth = this.srcWidth * 2
     this.playerHeight = this.srcHeight * 2
     this.x = 0
@@ -94,21 +95,41 @@ export class Player {
     this.isShowAdditionalScore = false
     this.additionalScoreTimeStamp = 0
     this.additionalScoreShowDuration = 500
+
+    // Companion
+    this.companion = null
+
+    // PowerUp
+    this.pointMultipler = 1
   }
 
-  draw(context) {
-    this.gameContext = context
+  draw() {
     // start debugging
-    // this.gameContext.strokeStyle = 'red'
-    // this.gameContext.strokeRect(this.x, this.y, this.playerWidth, this.playerHeight)
-    // this.gameContext.beginPath()
-    // this.gameContext.arc(this.x + this.playerHeight / 2, this.y + this.playerWidth / 2, this.playerWidth / 2, 0, 2 * Math.PI)
-    // this.gameContext.stroke()
+    // this.context.strokeStyle = 'red'
+    // this.context.strokeRect(this.x, this.y, this.playerWidth, this.playerHeight)
+    // this.context.beginPath()
+    // this.context.arc(this.x + this.playerHeight / 2, this.y + this.playerWidth / 2, this.playerWidth / 2, 0, 2 * Math.PI)
+    // this.context.stroke()
     // end debugging
-    this.gameContext.drawImage(this.player, (this.startFrame + this.frameX) * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.playerWidth, this.playerHeight)
+    this.context.drawImage(this.player, (this.startFrame + this.frameX) * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.playerWidth, this.playerHeight)
+
     // Run Effect
-    this.gameContext.drawImage(this.effect, (this.effectStartFrame + this.effectFrameX) * 16, 0, 16, 16, this.x - this.srcWidth / 2, this.y + this.playerHeight / 2, 16, 16)
-    this.gameContext.drawImage(this.effect, (this.effectStartFrame + 3 + this.effectFrameX) * 16, 0, 16, 16, this.x - this.srcWidth, this.y + this.playerHeight / 2, 16, 16)
+    this.context.drawImage(this.effect, (this.effectStartFrame + this.effectFrameX) * 16, 0, 16, 16, this.x - this.srcWidth / 2, this.y + this.playerHeight / 2, 16, 16)
+    this.context.drawImage(this.effect, (this.effectStartFrame + 3 + this.effectFrameX) * 16, 0, 16, 16, this.x - this.srcWidth, this.y + this.playerHeight / 2, 16, 16)
+
+    //  Companion
+    if (this.gameContext.companion) {
+      this.companion = this.gameContext.companion
+      if (this.companion.name === 'neko') {
+        this.companion.sy = 6
+        this.companion.maxFrame = 3
+        this.pointMultipler = 2
+
+        this.context.drawImage(this.companion.image, this.companion.sx * this.companion.sWidth, this.companion.sy * this.companion.sHeight, this.companion.sWidth, this.companion.sHeight, this.x - this.playerWidth * 0.8, this.companion.dy, this.companion.dWidth, this.companion.dHeight)
+      }
+      
+
+    }
   }
 
   // Action event
@@ -176,6 +197,15 @@ export class Player {
         this.effectFrameX += 1
       }
 
+      // companion
+      if (this.companion) {
+        if (this.companion.sx >= this.companion.maxFrame) {
+          this.companion.sx = 0
+        } else {
+          this.companion.sx += 1
+        }
+      }
+
       this.frameTimer = 0
     } else {
       this.frameTimer += deltaTime
@@ -185,24 +215,29 @@ export class Player {
     coins.forEach((coin) => {
       const playerCoordinateX = this.x + this.playerWidth / 2
       const playerCoordinateY = this.y + this.playerHeight / 2
-      const coinCoordinateX = coin.x + coin.coinWidth / 2
-      const coinCoordinateY = coin.y + coin.coinHeight / 2
+      const coinCoordinateX = coin.dx + coin.dWidth / 2
+      const coinCoordinateY = coin.dy + coin.dHeight / 2
       const dx = coinCoordinateX - playerCoordinateX
       const dy = coinCoordinateY - playerCoordinateY
       const distance = Math.sqrt(dx * dx + dy * dy)
 
       // start debugging
-      // this.gameContext.beginPath()
-      // this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
-      // this.gameContext.lineTo(coinCoordinateX, coinCoordinateY)
-      // this.gameContext.stroke()
+      // this.context.save()
+      // this.context.beginPath()
+      // this.context.moveTo(playerCoordinateX, playerCoordinateY)
+      // this.context.lineTo(coinCoordinateX, coinCoordinateY)
+      // this.context.stroke()
+      // this.context.restore()
       // end debugging
 
-      if (distance < (this.playerWidth / 2) + (coin.width / 2)) {
+      if (distance < (this.playerWidth / 2) + (coin.sWidth / 2)) {
         coin.isOutOufScreen = true
         this.isShowAdditionalScore = true
         this.additionalScores.push(coin.additionalScore)
-        game.score += coin.additionalScore
+
+        console.log(this.pointMultipler)
+
+        game.score += coin.additionalScore * this.pointMultipler
       }
     })
 
@@ -210,20 +245,20 @@ export class Player {
     powerUps.forEach((powerUp) => {
       const playerCoordinateX = this.x + this.playerWidth / 2
       const playerCoordinateY = this.y + this.playerHeight / 2
-      const coinCoordinateX = powerUp.x + powerUp.coinWidth / 2
-      const coinCoordinateY = powerUp.y + powerUp.coinHeight / 2
+      const coinCoordinateX = powerUp.dx + powerUp.dWidth / 2
+      const coinCoordinateY = powerUp.dy + powerUp.dHeight / 2
       const dx = coinCoordinateX - playerCoordinateX
       const dy = coinCoordinateY - playerCoordinateY
       const distance = Math.sqrt(dx * dx + dy * dy)
 
       // start debugging
-      // this.gameContext.beginPath()
-      // this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
-      // this.gameContext.lineTo(coinCoordinateX, coinCoordinateY)
-      // this.gameContext.stroke()
+      // this.context.beginPath()
+      // this.context.moveTo(playerCoordinateX, playerCoordinateY)
+      // this.context.lineTo(coinCoordinateX, coinCoordinateY)
+      // this.context.stroke()
       // end debugging
 
-      if (distance < (this.playerWidth / 2) + (powerUp.width / 2)) {
+      if (distance < (this.playerWidth / 2) + (powerUp.sWidth / 2)) {
         powerUp.isOutOufScreen = true
         this.isShowAdditionalScore = true
         this.additionalScores.push(powerUp.additionalScore)
@@ -231,6 +266,10 @@ export class Player {
         
         if (powerUp.type === 'health') {
           game.health += 1
+        }
+
+        if (powerUp.type === 'companion') {
+          game.companion = powerUp
         }
       }
     })
@@ -241,27 +280,34 @@ export class Player {
     enemies.forEach((enemy) => {
       const playerCoordinateX = this.x + this.playerWidth / 2
       const playerCoordinateY = this.y + this.playerHeight / 2
-      const enemyCoordinateX = enemy.x + enemy.enemyWidth / 2
-      const enemyCoordinateY = enemy.y + enemy.enemyHeight / 2
+      const enemyCoordinateX = enemy.dx + enemy.dWidth / 2
+      const enemyCoordinateY = enemy.dy + enemy.dHeight / 2
       const dx = enemyCoordinateX - playerCoordinateX
       const dy = enemyCoordinateY - playerCoordinateY
       const distance = Math.sqrt(dx * dx + dy * dy)
 
       // start debugging
-      // this.gameContext.beginPath()
-      // this.gameContext.moveTo(playerCoordinateX, playerCoordinateY)
-      // this.gameContext.lineTo(enemyCoordinateX, enemyCoordinateY)
-      // this.gameContext.strokeStyle = 'black'
-      // this.gameContext.stroke()
+      // this.context.beginPath()
+      // this.context.moveTo(playerCoordinateX, playerCoordinateY)
+      // this.context.lineTo(enemyCoordinateX, enemyCoordinateY)
+      // this.context.strokeStyle = 'black'
+      // this.context.stroke()
       // end debugging
 
-      if (distance < (this.playerWidth / 2) + (enemy.width / 2)) {
+      if (distance < (this.playerWidth / 2) + (enemy.sWidth / 2)) {
         if (this.state !== 'enemy-colation') {
           this.state = 'enemy-colation'
 
           if (this.invincibleTimer > 500) {
-            game.health -= 1
-            this.invincibleTimer = 0
+            if (this.companion && this.companion.name === 'neko') {
+              this.gameContext.companion = null
+              this.companion = null
+              this.pointMultipler = 1
+              this.invincibleTimer = 0
+            } else {
+              game.health -= 1
+              this.invincibleTimer = 0
+            }
           }
 
           if (game.health < 1) {
@@ -350,8 +396,9 @@ export class Player {
   }
 
   handleAdditionalScore = () => {
-    this.gameContext.font = '10px "Press Start 2P"'
-    this.gameContext.fillStyle = '#E18608'
+    this.context.save()
+    this.context.font = '10px "Press Start 2P"'
+    this.context.fillStyle = this.pointMultipler > 1 ? '#E18608' : 'grey'
     if (this.isShowAdditionalScore) {
       if (this.additionalScoreTimeStamp > this.additionalScoreShowDuration) {
         this.additionalScores.splice(0, 1)
@@ -360,10 +407,11 @@ export class Player {
       } else {
         this.additionalScoreTimeStamp += 10
 
-        const score = this.additionalScores[0]
-        this.gameContext.fillText(`+${score}`, this.x, this.y)
+        const score = this.additionalScores[0] * this.pointMultipler
+        this.context.fillText(`+${score}`, this.x, this.y)
       }
     }
+    this.context.restore()
   }
 
   click(x, y) {

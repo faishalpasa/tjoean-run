@@ -7,3 +7,15 @@ export const getCanvasCoordinate = (clientWidth, clientHeight, clientX, clientY,
   const y = (clientY - rectTop) * (HEIGHT / canvasHeight)
   return { x, y }
 }
+
+export const getDYMultiplier = (position = 'ground') => {
+  let dYMultiplier = 1
+  if (position === 'ground') {
+    dYMultiplier = 1
+  } else if (position === 'mid') {
+    dYMultiplier = 3
+  } else if (position === 'fly') {
+    dYMultiplier = 5
+  }
+  return dYMultiplier
+}

@@ -1,24 +1,28 @@
 
 import { Background } from './background.js'
-import { Enemy } from './enemy.js'
-import { Coin } from './coin.js'
 import { Game } from './game.js'
 import { KeyboardHandler } from './keyboard.js'
-import { Something } from './object.js'
 import { Player } from './player.js'
 import { WIDTH, HEIGHT } from './src/constants/canvas.js'
-import { getCanvasCoordinate } from './src/utils/coordinate.js'
+import { getCanvasCoordinate, getDYMultiplier } from './src/utils/coordinate.js'
 import { Tile } from './tile.js'
 import { Health } from './health.js'
 import { Boss } from './boss.js'
 import { Keypad } from './keypad.js'
+import { Sprite } from './sprite.js'
 import { isPotrait, isInsideRect } from './src/utils/canvas.js'
-import { DASH, JUMP, JUMP_HIGH } from "./src/constants/action.js"
+import { DASH, JUMP } from "./src/constants/action.js"
+import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
 
 const ENEMY_INTERVAL = 2500
 const BOSS_APPEAR_TIMER = 10000
 const BOSS_DISAPPEAR_TIMER = 30000 // 60000
 const LEVEL_UP_SCORE = 10000
+const Y_POSITIONS = [
+  { name: 'ground', dyMultipler: 1 },
+  { name: 'mid', dyMultipler: 3 },
+  { name: 'fly', dyMultipler: 5 }
+]
 
 window.addEventListener('load', () => {
   const canvas = document.getElementById('canvas')
@@ -42,8 +46,7 @@ window.addEventListener('load', () => {
     new Background(canvasContext, './assets/backgrounds/background3.png', 0.5),
     new Background(canvasContext, './assets/backgrounds/background4.png', 1),
   ]
-  const player = new Player(canvasContext) 
-  const fullscreenButton = new Something(ctx)
+  const player = new Player(ctx, game) 
   const health = new Health(canvasContext, game)
   const boss = new Boss(canvasContext, { name: 'boss-1', size: 160, maxFrame: 0, additionalScore: 1000, sizeMultipler: 1.5 })
   const keypad = new Keypad(ctx)
@@ -57,19 +60,39 @@ window.addEventListener('load', () => {
     { name: 'coin2', maxFrame: 9, additionalScore: 50, type: 'coin' },
     { name: 'diamond', maxFrame: 4, additionalScore: 300, type: 'coin' }
   ]
-  const coinPosition = ['ground', 'mid', 'fly']
+  const coinPosition = Y_POSITIONS
   const handleShowCoins = (deltaTime) => {
     if (coinTimer > coinInterval + coinRandomInterval) {
       const randomCoin = coinList[Math.floor(Math.random() * coinList.length)]
       const randomCoinPosition = coinPosition[Math.floor(Math.random() * coinPosition.length)]
+      const yPosition = randomCoin.position ? getDYMultiplier(randomCoin.position) : randomCoinPosition.dyMultipler
       const randomCoinSrc = `./assets/coins/${randomCoin.name}.png`
-      coins.push(new Coin(canvasContext, randomCoin, randomCoinSrc, randomCoinPosition))
+      coins.push(new Sprite(
+        canvasContext,
+        {
+          image: {
+            src: randomCoinSrc,
+            sx: 0,
+            sy: 0,
+            sWidth: 16,
+            sHeight: 16,
+            dx: canvasContext.width,
+            dy: canvasContext.height - TILE_HEIGHT * TILE_MULTIPLIER - 32 * yPosition,
+            dWidth: 32,
+            dHeight: 32
+          },
+          maxFrame: randomCoin.maxFrame,
+          additionalScore: randomCoin.additionalScore,
+          type: randomCoin.type,
+          speed: 2
+        }
+      ))
       coinRandomInterval = Math.random() * 5000
       coinTimer = 0
     } else {
       coinTimer += deltaTime
     }
-    coins.forEach(coin => {
+    coins.forEach((coin) => {
       coin.draw(ctx)
       coin.update(deltaTime)
     })
@@ -81,15 +104,60 @@ window.addEventListener('load', () => {
   let powerUpsInterval = 20000
   let powerUpsnRandomInterval = Math.random() * 1000 + 1000
   const powerUpsList = [
-    { name: 'heart2-shine', maxFrame: 5, additionalScore: 1000, type: 'health' },
+    { 
+      name: 'heart2-shine', 
+      maxFrame: 5, 
+      additionalScore: 500, 
+      type: 'health',
+      sx: 0,
+      sy: 0,
+      sWidth: 16,
+      sHeight: 16,
+      dWidth: 32,
+      dHeight: 32
+    },
+    { 
+      name: 'neko', 
+      maxFrame: 7, 
+      additionalScore: 500, 
+      type: 'companion',
+      sx: 0,
+      sy: 0,
+      sWidth: 32,
+      sHeight: 32,
+      dWidth: 64,
+      dHeight: 64,
+      position: 'ground'
+    },
   ]
-  const powerUpsPosition = ['ground', 'mid', 'fly']
+  const powerUpsPosition = Y_POSITIONS
   const handleShowPowerUps = (deltaTime) => {
     if (powerUpsTimer > powerUpsInterval + powerUpsnRandomInterval) {
       const randomPowerUp = powerUpsList[Math.floor(Math.random() * powerUpsList.length)]
       const randomPowerUpPosition = powerUpsPosition[Math.floor(Math.random() * powerUpsPosition.length)]
+      const yPosition = randomPowerUp.position ? getDYMultiplier(randomPowerUp.position) : randomPowerUpPosition.dyMultipler
       const randomPowerUpSrc = `./assets/power_ups/${randomPowerUp.name}.png`
-      powerUps.push(new Coin(canvasContext, randomPowerUp, randomPowerUpSrc, randomPowerUpPosition))
+      powerUps.push(new Sprite(
+        canvasContext,
+        {
+          image: {
+            src: randomPowerUpSrc,
+            sx: randomPowerUp.sx,
+            sy: randomPowerUp.sy,
+            sWidth: randomPowerUp.sWidth,
+            sHeight: randomPowerUp.sHeight,
+            dx: canvasContext.width,
+            dy: canvasContext.height - TILE_HEIGHT * TILE_MULTIPLIER - randomPowerUp.dHeight * yPosition,
+            dWidth: randomPowerUp.dWidth,
+            dHeight: randomPowerUp.dHeight
+          },
+          maxFrame: randomPowerUp.maxFrame,
+          additionalScore: randomPowerUp.additionalScore,
+          type: randomPowerUp.type,
+          name: randomPowerUp.name,
+          speed: 2
+        }
+      ))
       powerUpsInterval = Math.random() * 10000 + 20000
       powerUpsTimer = 0
     } else {
@@ -110,19 +178,47 @@ window.addEventListener('load', () => {
   const handleShowEnemies = (deltaTime) => {
     const casualEnemy = [
       // { name: 'spikes-1', maxFrame: 1, position: 'ground', speed: 1 },
-      { name: 'mushroom-walk', maxFrame: 9, position: 'ground', speed: 3 },
+      { name: 'mushroom-walk', maxFrame: 9, position: 'ground', speed: 3, },
       { name: 'ghost1_fly', maxFrame: 5, position: 'mid', speed: 5 },
       { name: 'ghost1_fly', maxFrame: 5, position: 'fly', speed: 7 },
     ]
     const bossEnemy = [
-      { name: 'lele', maxFrame: 5, position: 'ground', speed: 7, size: 48, sizeMultipler: 2 },
-      { name: 'lele', maxFrame: 5, position: 'mid', speed: 9, size: 48, sizeMultipler: 2  },
+      { 
+        name: 'lele', 
+        maxFrame: 5, 
+        speed: 7, 
+        sWidth: 48, 
+        sHeight: 48,
+        dWidth: 64, 
+        dHeight: 64,
+      },
     ]
     const enemyList = game.isBossAppear ? bossEnemy : casualEnemy
-
+    const enemyPosition = Y_POSITIONS
     if (enemyTimer > enemyInterval + enemyRandomInterval) {
       const randomEnemy = enemyList[Math.floor(Math.random() * enemyList.length)]
-      enemies.push(new Enemy(canvasContext, randomEnemy))
+      const randomEnemyPosition = enemyPosition[Math.floor(Math.random() * enemyPosition.length)]
+      const yPosition = randomEnemy.position ? getDYMultiplier(randomEnemy.position) : randomEnemyPosition.dyMultipler
+      enemies.push(new Sprite(
+        canvasContext,
+        {
+          image: {
+            src: `./assets/enemies/${randomEnemy.name}.png`,
+            sx: 0,
+            sy: 0,
+            sWidth: randomEnemy.sWidth || 16,
+            sHeight: randomEnemy.sHeight || 16,
+            dx: canvasContext.width,
+            dy: canvasContext.height - TILE_HEIGHT * TILE_MULTIPLIER - (randomEnemy.dWidth || 32) * yPosition,
+            dWidth: randomEnemy.dWidth || 32,
+            dHeight: randomEnemy.dHeight || 32
+          },
+          maxFrame: randomEnemy.maxFrame,
+          additionalScore: 0,
+          type: 'enemy',
+          speed: randomEnemy.speed,
+        }
+      ))
 
       enemyInterval = game.enemyInterval
       enemyRandomInterval = Math.random() * game.enemyInterval + 100
@@ -198,16 +294,6 @@ window.addEventListener('load', () => {
     // context.restore()
   }
 
-  const handleFullScreen = () => {
-    if (!document.fullscreenElement) {
-      canvas.requestFullscreen().catch(err => {
-        console.log(err)
-      })
-    } else {
-      document.exitFullscreen()
-    }
-  }
-
   // Start Game
   let startGameAnimation
 
@@ -228,9 +314,7 @@ window.addEventListener('load', () => {
       backgroundStack.update(idx, game)
     })
 
-    // fullscreenButton.draw()
-
-    player.draw(ctx)
+    player.draw()
     player.update(game, keyboard, deltaTime, coins, enemies, powerUps)
 
     tile.draw(ctx)
@@ -251,7 +335,7 @@ window.addEventListener('load', () => {
     handleBossApear(deltaTime)
     handleEnemyInterval()
 
-    keypad.draw(ctx)
+    keypad.draw()
 
     game.update()
     game.saveScore()
@@ -267,7 +351,9 @@ window.addEventListener('load', () => {
       ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + 32)
       ctx.restore()
 
-      cancelAnimationFrame(startGameAnimation)
+      setTimeout(() => {
+        cancelAnimationFrame(startGameAnimation)
+      },  200)
     } else {
       startGameAnimation = requestAnimationFrame(startGame)
     }
@@ -308,32 +394,25 @@ window.addEventListener('load', () => {
     ctx.drawImage(buttonImage, buttonX, buttonY, buttonWidth, buttonHeight)
 
     ctx.save()
-    if (game.isGameOver && game.isPlaying) {
-      ctx.textAlign = 'center'
-      ctx.fillText(`Game Over`, WIDTH / 2, HEIGHT / 2)
-      ctx.fillText(`Score: ${game.score}`, WIDTH / 2, HEIGHT / 2 + 20)
 
-      ctx.font = '12px "Press Start 2P"'
-      ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + 32)
-    } else {
-      ctx.fillStyle = '#006E5A'
-      ctx.textAlign = 'center'
-      ctx.font = '12px "Press Start 2P"'
-      ctx.fillText(`Tjoean Run`, WIDTH * 0.5, boxY + 32)
-      ctx.font = '6px "Press Start 2P"'
-      ctx.fillText(`Lari dan hindari para musuh`, WIDTH * 0.5, boxY + 64)
-      ctx.fillText(`lalu kumpulkan koin untuk menambah`, WIDTH * 0.5, boxY + 64 + 16 * 1)
-      ctx.fillText(`poin agar lebih tjoean`, WIDTH * 0.5, boxY + 64 + 16 * 2)
-      ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 3)
-      ctx.fillText(`Dash untuk lari`, WIDTH * 0.5, boxY + 64 + 16 * 4)
-      ctx.fillText(`Jump untuk melompat`, WIDTH * 0.5, boxY + 64 + 16 * 5)
-      ctx.fillText(`Tap Jump 2x untuk melompat lebih tinggi 🎤🎼`, WIDTH * 0.5, boxY + 64 + 16 * 6)
-      ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 7)
-      ctx.fillText(`Gunakan mode landscape biar lebih enak`, WIDTH * 0.5, boxY + 64 + 16 * 8)
-  
-      ctx.font = '12px "Press Start 2P"'
-      ctx.fillText(`Gas Main`, WIDTH * 0.5, buttonY + 32)
-    }
+    ctx.fillStyle = '#006E5A'
+    ctx.textAlign = 'center'
+    ctx.font = '12px "Press Start 2P"'
+    ctx.fillText(`Tjoean Run`, WIDTH * 0.5, boxY + 32)
+    ctx.font = '6px "Press Start 2P"'
+    ctx.fillText(`Lari dan hindari para musuh`, WIDTH * 0.5, boxY + 64)
+    ctx.fillText(`lalu kumpulkan koin untuk menambah`, WIDTH * 0.5, boxY + 64 + 16 * 1)
+    ctx.fillText(`poin agar lebih tjoean`, WIDTH * 0.5, boxY + 64 + 16 * 2)
+    ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 3)
+    ctx.fillText(`Dash untuk lari`, WIDTH * 0.5, boxY + 64 + 16 * 4)
+    ctx.fillText(`Jump untuk melompat`, WIDTH * 0.5, boxY + 64 + 16 * 5)
+    ctx.fillText(`Tap Jump 2x untuk melompat lebih tinggi 🎤🎼`, WIDTH * 0.5, boxY + 64 + 16 * 6)
+    ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 7)
+    ctx.fillText(`Gunakan mode landscape biar lebih enak`, WIDTH * 0.5, boxY + 64 + 16 * 8)
+
+    ctx.font = '12px "Press Start 2P"'
+    ctx.fillText(`Gas Main`, WIDTH * 0.5, buttonY + 32)
+
     ctx.restore()
 
     startMenuAnimation = requestAnimationFrame(startMenu)
