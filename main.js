@@ -434,15 +434,15 @@ window.addEventListener('load', () => {
   }
 
   const handleRequestFullScreen = () => {
-    // if (canvas.requestFullscreen) {
-    //   canvas.requestFullscreen()
-    // } else if (canvas.webkitRequestFullscreen) {
-    //   canvas.webkitRequestFullscreen()
-    // } else if (canvas.mozRequestFullScreen) {
-    //   canvas.mozRequestFullScreen()
-    // } else if (canvas.msRequestFullscreen) {
-    //   canvas.msRequestFullscreen()
-    // }
+    if (canvas.requestFullscreen) {
+      canvas.requestFullscreen()
+    } else if (canvas.webkitRequestFullscreen) {
+      canvas.webkitRequestFullscreen()
+    } else if (canvas.mozRequestFullScreen) {
+      canvas.mozRequestFullScreen()
+    } else if (canvas.msRequestFullscreen) {
+      canvas.msRequestFullscreen()
+    }
   }
 
   canvas.addEventListener('click', (e) => {
@@ -478,15 +478,6 @@ window.addEventListener('load', () => {
       if (!keyboard.keys.includes(DASH)) {
         keyboard.keys.push(DASH)
       }
-    }
-  })
-
-  canvas.addEventListener("touchmove", (e) => {
-    const rect = canvas.getBoundingClientRect()
-    const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
-
-    if (!keypad.clickLeftKeypad(x, y)) {
-      keyboard.keys = keyboard.keys.filter(key => key !== DASH)
     }
   })
 
