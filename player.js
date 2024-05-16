@@ -1,4 +1,5 @@
 import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
+import { DASH, JUMP, JUMP_HIGH } from './src/constants/action.js'
 
 const IMAGE_PLAYER = './assets/characters/player.png'
 const PLAYER_STATE = {
@@ -67,9 +68,10 @@ export class Player {
     this.x = 0
     this.y = this.initialPlayerY
     this.vy = 0
+    this.jumpCount = 0
 
     this.weight = 1
-    this.jumpHeight = 20
+    this.jumpHeight = 13
     this.speed = 0
     this.maxSpeed = 3
     this.state = 'idle'
@@ -111,7 +113,7 @@ export class Player {
 
   // Action event
 
-  actionIdle() {
+  animationIdle() {
     this.frameY = PLAYER_STATE.IDLE.frameY
     this.startFrame = PLAYER_STATE.IDLE.startFrame
     this.maxFrame = PLAYER_STATE.IDLE.maxFrame
@@ -119,7 +121,7 @@ export class Player {
     this.effectMaxFrame = EFFECT_STATE.IDLE.maxFrame
   }
 
-  actionRunRight() {
+  animationRunRight() {
     this.frameY = PLAYER_STATE.RUN.frameY
     this.startFrame = PLAYER_STATE.RUN.startFrame
     this.maxFrame = PLAYER_STATE.RUN.maxFrame
@@ -127,19 +129,19 @@ export class Player {
     this.effectMaxFrame = EFFECT_STATE.RUN.maxFrame
   }
 
-  actionRunLeft() {
+  animationRunLeft() {
     this.frameY = PLAYER_STATE.RUN.frameY
     this.startFrame = PLAYER_STATE.RUN.startFrame
     this.maxFrame = PLAYER_STATE.RUN.maxFrame
   }
 
-  actionJump() {
+  animationJump() {
     this.frameY = PLAYER_STATE.JUMP.frameY
     this.startFrame = PLAYER_STATE.JUMP.startFrame
     this.maxFrame = PLAYER_STATE.JUMP.maxFrame
   }
 
-  actionColationWithEnemy() {
+  animationColationWithEnemy() {
     if (this.state === 'enemy-colation') {
       // game.health -= 1
       this.startFrame = 17
@@ -155,8 +157,8 @@ export class Player {
 
   update(game, keyboards, deltaTime, coins, enemies, powerUps) {
     this.x += this.speed
-    this.run(keyboards.keys)
-    this.jump(keyboards.keys)
+    this.run(keyboards)
+    this.jump(keyboards)
 
     // animate
     if (this.frameTimer > this.frameInterval) {
@@ -278,6 +280,7 @@ export class Player {
     this.x = 0
     this.y = this.initialPlayerY
     this.vy = 0
+    this.xy = 0
     this.frame = 0
     this.additionalScores = []
     this.isShowAdditionalScore = false
@@ -285,30 +288,22 @@ export class Player {
     this.maxFrame = PLAYER_STATE.IDLE.maxFrame
   }
 
-  run(keyboards) {
-    if (keyboards.includes('ArrowRight')) {
+  run(action) {
+    if (action.keys.includes(DASH)) {
       this.speed = this.maxSpeed
 
       if (this.state === 'enemy-colation') {
-        this.actionColationWithEnemy()
+        this.animationColationWithEnemy()
       } else {
-        this.actionRunRight()
+        this.animationRunRight()
       }
-    } else if (keyboards.includes('ArrowLeft')) {
+    }  else {
       this.speed = -this.maxSpeed
 
       if (this.state === 'enemy-colation') {
-        this.actionColationWithEnemy()
+        this.animationColationWithEnemy()
       } else {
-        this.actionRunLeft()
-      }
-    } else {
-      this.speed = -this.maxSpeed
-
-      if (this.state === 'enemy-colation') {
-        this.actionColationWithEnemy()
-      } else {
-        this.actionIdle()
+        this.animationIdle()
       }
     }
 
@@ -320,27 +315,30 @@ export class Player {
     }
   }
 
-  jump(keyboards) {
-    if ((keyboards.includes('ArrowUp')) && this.onGround()) {
+  jump(action) {
+    if ((action.keys.includes(JUMP)) && this.jumpCount < 2) {
+      action.keys = action.keys.filter(key => key !== JUMP)
       this.vy -= this.jumpHeight
-    }
-    if ((keyboards.includes('SwipeUp')) && this.onGround()) {
-      this.vy -= this.jumpHeight
+      this.jumpCount += 1
     }
     
     this.y += this.vy
-
-    if (!this.onGround()){
+      
+    if (!this.onGround()) {
       this.vy += this.weight
+
       if (this.state === 'enemy-colation') {
-        this.actionColationWithEnemy()
+        this.animationColationWithEnemy()
       } else {
-        this.actionJump()
+        this.animationJump()
       }
     } else {
       this.vy = 0
+      this.jumpCount = 0
+      this.y = this.initialPlayerY
+
       if (this.state === 'enemy-colation') {
-        this.actionColationWithEnemy()
+        this.animationColationWithEnemy()
       } else {
         this.maxFrame = 3
       }

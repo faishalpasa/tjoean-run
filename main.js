@@ -13,6 +13,7 @@ import { Health } from './health.js'
 import { Boss } from './boss.js'
 import { Keypad } from './keypad.js'
 import { isPotrait, isInsideRect } from './src/utils/canvas.js'
+import { DASH, JUMP, JUMP_HIGH } from "./src/constants/action.js"
 
 const ENEMY_INTERVAL = 2500
 const BOSS_APPEAR_TIMER = 10000
@@ -212,7 +213,7 @@ window.addEventListener('load', () => {
 
   const startGame = (timestamp) => {
     const deltaTime = timestamp - game.lastTime
-    
+
     if (deltaTime < 1) {
       game.restart()
       player.restart()
@@ -255,8 +256,18 @@ window.addEventListener('load', () => {
     game.update()
     game.saveScore()
     if (game.isGameOver) {
+      const buttonImage = new Image()
+      buttonImage.src = './assets/gui/button-large-round.png'
+      ctx.drawImage(buttonImage, buttonX, buttonY, buttonWidth, buttonHeight)
+      ctx.save()
+      ctx.textAlign = 'center'
+      ctx.fillText(`Game Over`, WIDTH / 2, HEIGHT / 2)
+      ctx.fillText(`Score: ${game.score}`, WIDTH / 2, HEIGHT / 2 + 20)
+      ctx.font = '12px "Press Start 2P"'
+      ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + 32)
+      ctx.restore()
+
       cancelAnimationFrame(startGameAnimation)
-      startMenu(0)
     } else {
       startGameAnimation = requestAnimationFrame(startGame)
     }
@@ -289,7 +300,6 @@ window.addEventListener('load', () => {
     })
 
     const boxImage = new Image()
-
     boxImage.src = './assets/gui/box.png'
     ctx.drawImage(boxImage, boxX, boxY, boxWidth, boxHeight)
 
@@ -310,9 +320,16 @@ window.addEventListener('load', () => {
       ctx.textAlign = 'center'
       ctx.font = '12px "Press Start 2P"'
       ctx.fillText(`Tjoean Run`, WIDTH * 0.5, boxY + 32)
-      ctx.font = '8px "Press Start 2P"'
-      ctx.fillText(`Gunakan mode landscape`, WIDTH * 0.5, boxY + 64)
-      ctx.fillText(`biar lebih enak.`, WIDTH * 0.5, boxY + 64 + 16)
+      ctx.font = '6px "Press Start 2P"'
+      ctx.fillText(`Lari dan hindari para musuh`, WIDTH * 0.5, boxY + 64)
+      ctx.fillText(`lalu kumpulkan koin untuk menambah`, WIDTH * 0.5, boxY + 64 + 16 * 1)
+      ctx.fillText(`poin agar lebih tjoean`, WIDTH * 0.5, boxY + 64 + 16 * 2)
+      ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 3)
+      ctx.fillText(`Dash untuk lari`, WIDTH * 0.5, boxY + 64 + 16 * 4)
+      ctx.fillText(`Jump untuk melompat`, WIDTH * 0.5, boxY + 64 + 16 * 5)
+      ctx.fillText(`Tap Jump 2x untuk melompat lebih tinggi 🎤🎼`, WIDTH * 0.5, boxY + 64 + 16 * 6)
+      ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 7)
+      ctx.fillText(`Gunakan mode landscape biar lebih enak`, WIDTH * 0.5, boxY + 64 + 16 * 8)
   
       ctx.font = '12px "Press Start 2P"'
       ctx.fillText(`Gas Main`, WIDTH * 0.5, buttonY + 32)
@@ -356,13 +373,15 @@ window.addEventListener('load', () => {
     if (isInsideRect({x, y}, { x: buttonX, y: buttonY, width: buttonWidth, height: buttonHeight })) {
       handleRequestFullScreen()
       cancelAnimationFrame(startMenuAnimation)
-      game.isPlaying = true
+      
+      if (!game.isPlaying){
+        game.isPlaying = true
+        startGame(0)
+      }
 
       if (game.isGameOver) {
         handleRestartGame()
-      } else {
-        startGame(0)
-      }
+      } 
     }
   });
 
@@ -371,43 +390,26 @@ window.addEventListener('load', () => {
     const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
 
     if (keypad.clickLeftKeypad(x, y)) {
-      if (keyboard.keys.indexOf('ArrowRight') === -1) {
-        keyboard.keys.push('ArrowRight')
+      if (!keyboard.keys.includes(DASH)) {
+        keyboard.keys.push(DASH)
       }
     }
 
     if (keypad.clickRightKeypad(x, y)) {
-      if (keyboard.keys.indexOf('ArrowUp') === -1) {
-        keyboard.keys.push('ArrowUp')
+      if (!keyboard.keys.includes(JUMP)) {
+        keyboard.keys.push(JUMP)
       }
-      setTimeout(() => {
-        keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowUp')
-      }, 100)
     }
   })
-
-  // canvas.addEventListener("touchmove", (e) => {
-  //   const rect = canvas.getBoundingClientRect()
-  //   const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
-
-  //   if (keypad.clickLeftKeypad(x, y)) {
-  //     if (keyboard.keys.indexOf('ArrowRight') === -1) {
-  //       keyboard.keys.push('ArrowRight')
-  //     }
-  //   } else {
-  //     keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
-  //   }
-  // })
 
   canvas.addEventListener("touchend", (e) => {
     const rect = canvas.getBoundingClientRect()
     const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
 
     if (keypad.clickLeftKeypad(x, y)) {
-      keyboard.keys = keyboard.keys.filter(key => key !== 'ArrowRight')
+      keyboard.keys = keyboard.keys.filter(key => key !== DASH)
     }
   })
   
-  // startGame(0)
   startMenu(0)
 })

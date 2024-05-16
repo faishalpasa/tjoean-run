@@ -46,7 +46,6 @@ export class Keypad {
     const dy = y - (this.keypadRightY + this.height / 2) // square
     const distance = Math.sqrt(dx * dx + dy * dy)
     if (distance < (this.width / 2)) { // if circle, remove 2
-      console.log('click right')
       return true
     } else {
       return false
@@ -60,7 +59,6 @@ export class Keypad {
     const dy = y - (this.keypadLeftY + this.height / 2) // square
     const distance = Math.sqrt(dx * dx + dy * dy)
     if (distance < (this.width / 2)) { // if circle, remove 2
-      console.log('click left')
       return true
     } else {
       return false
