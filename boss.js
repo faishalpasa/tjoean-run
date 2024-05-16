@@ -33,6 +33,10 @@ export class Boss {
   }
 
   update(game) {
+    if (game.lastTime < 1) {
+      this.x = this.canvasContext.width
+    }
+    
     if (game.isBossAppear) {
       if (this.x === this.canvasContext.width - this.bossWidth && this.move === 'left') {
         this.move = 'right'

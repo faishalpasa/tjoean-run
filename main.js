@@ -212,6 +212,12 @@ window.addEventListener('load', () => {
 
   const startGame = (timestamp) => {
     const deltaTime = timestamp - game.lastTime
+    
+    if (deltaTime < 1) {
+      game.restart()
+      player.restart()
+    }
+    
     game.lastTime = timestamp
 
     ctx.clearRect(0, 0, WIDTH, HEIGHT)
@@ -265,7 +271,7 @@ window.addEventListener('load', () => {
   const buttonWidth = boxWidth * 0.5
   const buttonHeight = buttonWidth * 0.33
   const buttonX = (WIDTH - buttonWidth) * 0.5
-  const buttonY = (HEIGHT - boxHeight) + buttonHeight
+  const buttonY = (HEIGHT - boxHeight) / 2 + boxHeight - buttonHeight - 16
 
   let startMenuAnimation
 
@@ -317,21 +323,18 @@ window.addEventListener('load', () => {
   }
 
   const handleRestartGame = () => {
-    game.score = 0
-    if (game.isGameOver) {
-      game.restart()
-      player.restart()
-      backgroundStacks.forEach(backgroundStack => {
-        backgroundStack.restart()
-      })
-      coins = []
-      coinTimer = 0
-      enemies = []
-      enemyTimer = 0
-      bossAppearTimer = 0
-      bossDisapearTimer = 0
-      startGame(0)
-    }
+    // if (game.isGameOver) {
+    backgroundStacks.forEach(backgroundStack => {
+      backgroundStack.restart()
+    })
+    coins = []
+    coinTimer = 0
+    enemies = []
+    enemyTimer = 0
+    bossAppearTimer = 0
+    bossDisapearTimer = 0
+    startGame(0)
+    // }
   }
 
   const handleRequestFullScreen = () => {

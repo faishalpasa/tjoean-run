@@ -4,7 +4,7 @@ import { isPotrait } from './src/utils/canvas.js'
 export class Keypad {
   constructor(context) {
     this.context = context
-    this.width = isPotrait() ? 0.2 * WIDTH : 0.2 * HEIGHT
+    this.width = isPotrait() ? 0.25 * WIDTH : 0.25 * HEIGHT
     this.height = this.width
 
     this.keypadRightX = WIDTH - this.width

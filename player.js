@@ -226,7 +226,7 @@ export class Player {
         this.isShowAdditionalScore = true
         this.additionalScores.push(powerUp.additionalScore)
         game.score += powerUp.additionalScore
-        console.log(game.health, powerUp)
+        
         if (powerUp.type === 'health') {
           game.health += 1
         }
