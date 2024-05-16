@@ -12,27 +12,39 @@ export class Keypad {
 
     this.keypadLeftX = 0
     this.keypadLeftY = HEIGHT - this.height
+
+    this.imgSrc = `./assets/gui/button-circle.png`
+    this.image = new Image()
+    this.image.src = this.imgSrc
   }
 
   draw() {
     // Left Keypad
+    
     this.context.save()
-    this.context.strokeRect(this.keypadRightX, this.keypadRightY, this.width, this.height)
-    this.context.beginPath()
-    this.context.arc(this.keypadRightX + this.height / 2, this.keypadRightY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
-    this.context.stroke()
+    this.context.globalAlpha = 0.8
+    this.context.drawImage(this.image, 0, HEIGHT - this.height * 0.8, this.width * 0.8, this.height * 0.8)
+
+    // this.context.strokeRect(this.keypadRightX, this.keypadRightY, this.width, this.height)
+    // this.context.beginPath()
+    // this.context.arc(this.keypadRightX + this.height / 2, this.keypadRightY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
+    // this.context.stroke()
     this.context.font = '8px "Press Start 2P"'
-    this.context.fillText(`Dash`, WIDTH / 32, HEIGHT - this.height / 2 + 4)
+    this.context.fillText(`Dash`, WIDTH / 32, HEIGHT - this.height * 0.4)
     this.context.restore()
+
 
     // Right Keypad
     this.context.save()
-    this.context.strokeRect(this.keypadLeftX, this.keypadLeftY, this.width, this.height)
-    this.context.beginPath()
-    this.context.arc(this.keypadLeftX + this.height / 2, this.keypadLeftY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
-    this.context.stroke()
+    this.context.globalAlpha = 0.8
+    this.context.drawImage(this.image, WIDTH - this.width * 0.8, HEIGHT - this.height * 0.8, this.width * 0.8, this.height * 0.8)
+
+    // this.context.strokeRect(this.keypadLeftX, this.keypadLeftY, this.width, this.height)
+    // this.context.beginPath()
+    // this.context.arc(this.keypadLeftX + this.height / 2, this.keypadLeftY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
+    // this.context.stroke()
     this.context.font = '8px "Press Start 2P"'
-    this.context.fillText(`Jump`, WIDTH - this.width + 8, HEIGHT - this.height / 2 + 4)
+    this.context.fillText(`Jump`, WIDTH - this.height * 0.4 - 16, HEIGHT - this.height * 0.4)
     this.context.restore()
   }
 

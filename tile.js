@@ -13,16 +13,17 @@ export class Tile {
     this.tileWidth = this.width * TILE_MULTIPLIER
     this.tileHeight = this.height * TILE_MULTIPLIER
     this.x = 0
-    this.y = this.canvasContext.height - this.height * 2
+    this.y = this.canvasContext.height - this.height * TILE_MULTIPLIER
     this.speed = 1
     this.tileList = []
   }
 
 
   draw(context) {
-    const totalTile = Math.ceil(this.canvasContext.width / this.width)
+    const totalTile = Math.ceil(this.canvasContext.width / this.tileWidth) + 1
+    
     for (let i = 0; i < totalTile; i++) {
-      context.drawImage(this.image, 8, 0, this.width, this.height, this.x + (this.width * i), this.y, this.tileWidth, this.tileHeight)
+      context.drawImage(this.image, 8, 0, this.width, this.height, this.x + (this.tileWidth * i), this.y, this.tileWidth, this.tileHeight)
     }
   }
 
@@ -41,7 +42,7 @@ export class Tile {
 
 
     this.x -= this.speed
-    if (this.x < 0 - this.width) {
+    if (this.x < 0 - this.tileWidth) {
       this.x = 0
     }
   }

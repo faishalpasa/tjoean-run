@@ -1,5 +1,5 @@
 import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
-import { DASH, JUMP, JUMP_HIGH } from './src/constants/action.js'
+import { DASH, JUMP } from './src/constants/action.js'
 
 const IMAGE_PLAYER = './assets/characters/player.png'
 const PLAYER_STATE = {
