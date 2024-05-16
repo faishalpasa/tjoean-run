@@ -305,7 +305,7 @@ export class Player {
               this.pointMultipler = 1
               this.invincibleTimer = 0
             } else {
-              game.health -= 1
+              // game.health -= 1
               this.invincibleTimer = 0
             }
           }
