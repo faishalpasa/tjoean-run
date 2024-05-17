@@ -101,7 +101,7 @@ window.addEventListener('load', () => {
   let powerUps = []
   let powerUpsTimer = 0
   let powerUpsInterval = 20000
-  let powerUpsnRandomInterval = Math.random() * 1000 + 1000
+  let powerUpsnRandomInterval = 0
   const powerUpsList = [
     { 
       name: 'heart2-shine', 
@@ -121,7 +121,7 @@ window.addEventListener('load', () => {
       additionalScore: 500, 
       type: 'companion',
       sx: 0,
-      sy: 0,
+      sy: 5 * 32,
       sWidth: 32,
       sHeight: 32,
       dWidth: 64,

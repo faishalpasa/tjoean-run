@@ -121,12 +121,13 @@ export class Player {
     //  Companion
     if (this.gameContext.companion) {
       this.companion = this.gameContext.companion
+      const frameYDiff = 0.5
       if (this.companion.name === 'neko') {
         this.companion.sy = 6
         this.companion.maxFrame = 3
         this.pointMultipler = 2
 
-        this.context.drawImage(this.companion.image, this.companion.sx * this.companion.sWidth, this.companion.sy * this.companion.sHeight, this.companion.sWidth, this.companion.sHeight, this.x - this.playerWidth * 0.8, this.companion.dy, this.companion.dWidth, this.companion.dHeight)
+        this.context.drawImage(this.companion.image, this.companion.sx * this.companion.sWidth, this.companion.sy * this.companion.sHeight - frameYDiff, this.companion.sWidth, this.companion.sHeight, this.x - this.playerWidth * 0.8, this.companion.dy, this.companion.dWidth, this.companion.dHeight)
       }
       
 
