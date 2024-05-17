@@ -3,16 +3,15 @@ import { Background } from './background.js'
 import { Game } from './game.js'
 import { KeyboardHandler } from './keyboard.js'
 import { Player } from './player.js'
-import { WIDTH, HEIGHT } from './src/constants/canvas.js'
-import { getCanvasCoordinate, getDYMultiplier } from './src/utils/coordinate.js'
 import { Tile } from './tile.js'
 import { Health } from './health.js'
 import { Boss } from './boss.js'
 import { Keypad } from './keypad.js'
 import { Sprite } from './sprite.js'
-import { isPotrait, isInsideRect } from './src/utils/canvas.js'
 import { DASH, JUMP } from "./src/constants/action.js"
-import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
+import { WIDTH, HEIGHT, TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
+import { isPotrait, isInsideRect, getFont, getRatioSize } from './src/utils/canvas.js'
+import { getCanvasCoordinate, getDYMultiplier } from './src/utils/coordinate.js'
 
 const ENEMY_INTERVAL = 2500
 const BOSS_APPEAR_TIMER = 10000
@@ -77,9 +76,9 @@ window.addEventListener('load', () => {
             sWidth: 16,
             sHeight: 16,
             dx: canvasContext.width,
-            dy: canvasContext.height - TILE_HEIGHT * TILE_MULTIPLIER - 32 * yPosition,
-            dWidth: 32,
-            dHeight: 32
+            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(32) * yPosition,
+            dWidth: getRatioSize(32),
+            dHeight: getRatioSize(32)
           },
           maxFrame: randomCoin.maxFrame,
           additionalScore: randomCoin.additionalScore,
@@ -147,9 +146,9 @@ window.addEventListener('load', () => {
             sWidth: randomPowerUp.sWidth,
             sHeight: randomPowerUp.sHeight,
             dx: canvasContext.width,
-            dy: canvasContext.height - TILE_HEIGHT * TILE_MULTIPLIER - randomPowerUp.dHeight * yPosition,
-            dWidth: randomPowerUp.dWidth,
-            dHeight: randomPowerUp.dHeight
+            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(randomPowerUp.dHeight) * yPosition,
+            dWidth: getRatioSize(randomPowerUp.dWidth),
+            dHeight: getRatioSize(randomPowerUp.dHeight)
           },
           maxFrame: randomPowerUp.maxFrame,
           additionalScore: randomPowerUp.additionalScore,
@@ -209,9 +208,9 @@ window.addEventListener('load', () => {
             sWidth: randomEnemy.sWidth || 16,
             sHeight: randomEnemy.sHeight || 16,
             dx: canvasContext.width,
-            dy: canvasContext.height - TILE_HEIGHT * TILE_MULTIPLIER - (randomEnemy.dWidth || 32) * yPosition,
-            dWidth: randomEnemy.dWidth || 32,
-            dHeight: randomEnemy.dHeight || 32
+            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(randomEnemy.dWidth || 32) * yPosition,
+            dWidth: getRatioSize(randomEnemy.dWidth || 32),
+            dHeight: getRatioSize(randomEnemy.dHeight || 32)
           },
           maxFrame: randomEnemy.maxFrame,
           additionalScore: 0,
@@ -285,13 +284,13 @@ window.addEventListener('load', () => {
   const handleStatus = (context) => {
     game.score = game.score += 1
     
-    // context.save()
-    context.font = '10px "Press Start 2P"'
+    context.save()
+    context.font = getFont(10)
     context.fillStyle = '#006E5A'
-    context.fillText(`High Score: ${highScore}`, 10, 20)
+    context.fillText(`High Score: ${highScore}`, getRatioSize(10), getRatioSize(20))
     context.fillStyle = '#001E5E'
-    context.fillText(`Score: ${game.score}`, 10, 35)
-    // context.restore()
+    context.fillText(`Score: ${game.score}`, getRatioSize(10), getRatioSize(35))
+    context.restore()
   }
 
   // Start Game
@@ -345,15 +344,17 @@ window.addEventListener('load', () => {
       ctx.drawImage(buttonImage, buttonX, buttonY, buttonWidth, buttonHeight)
       ctx.save()
       ctx.textAlign = 'center'
+      ctx.font = getFont(8)
+      ctx.fillStyle = '#001E5E'
       ctx.fillText(`Game Over`, WIDTH / 2, HEIGHT / 2)
-      ctx.fillText(`Score: ${game.score}`, WIDTH / 2, HEIGHT / 2 + 20)
-      ctx.font = '12px "Press Start 2P"'
-      ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + 32)
+      ctx.fillText(`Score: ${game.score}`, WIDTH / 2, HEIGHT / 2 + getRatioSize(20))
+      ctx.font = getFont(12)
+      ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + getRatioSize(32))
       ctx.restore()
 
       setTimeout(() => {
         cancelAnimationFrame(startGameAnimation)
-      },  200)
+      },  500)
     } else {
       startGameAnimation = requestAnimationFrame(startGame)
     }
@@ -368,7 +369,7 @@ window.addEventListener('load', () => {
   const buttonWidth = boxWidth * 0.5
   const buttonHeight = buttonWidth * 0.33
   const buttonX = (WIDTH - buttonWidth) * 0.5
-  const buttonY = (HEIGHT - boxHeight) / 2 + boxHeight - buttonHeight - 16
+  const buttonY = (HEIGHT - boxHeight) / 2 + boxHeight - buttonHeight - getRatioSize(16)
 
   let startMenuAnimation
 
@@ -397,21 +398,21 @@ window.addEventListener('load', () => {
 
     ctx.fillStyle = '#006E5A'
     ctx.textAlign = 'center'
-    ctx.font = '12px "Press Start 2P"'
-    ctx.fillText(`Tjoean Run`, WIDTH * 0.5, boxY + 32)
-    ctx.font = '6px "Press Start 2P"'
-    ctx.fillText(`Lari dan hindari para musuh`, WIDTH * 0.5, boxY + 64)
-    ctx.fillText(`lalu kumpulkan koin untuk menambah`, WIDTH * 0.5, boxY + 64 + 16 * 1)
-    ctx.fillText(`poin agar lebih tjoean`, WIDTH * 0.5, boxY + 64 + 16 * 2)
-    ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 3)
-    ctx.fillText(`Dash untuk lari`, WIDTH * 0.5, boxY + 64 + 16 * 4)
-    ctx.fillText(`Jump untuk melompat`, WIDTH * 0.5, boxY + 64 + 16 * 5)
-    ctx.fillText(`Tap Jump 2x untuk melompat lebih tinggi 🎤🎼`, WIDTH * 0.5, boxY + 64 + 16 * 6)
+    ctx.font = getFont(12)
+    ctx.fillText(`Tjoean Run`, WIDTH * 0.5, boxY + getRatioSize(32))
+    ctx.font = getFont(6)
+    ctx.fillText(`Lari dan hindari para musuh`, WIDTH * 0.5, boxY + getRatioSize(64))
+    ctx.fillText(`lalu kumpulkan koin untuk menambah`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 1))
+    ctx.fillText(`poin agar lebih tjoean`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 2))
+    ctx.fillText(``, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 3))
+    ctx.fillText(`Dash untuk lari`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 4))
+    ctx.fillText(`Jump untuk melompat`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 5))
+    ctx.fillText(`Tap Jump 2x untuk melompat lebih tinggi 🎤🎼`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 6))
     ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 7)
-    ctx.fillText(`Gunakan mode landscape biar lebih enak`, WIDTH * 0.5, boxY + 64 + 16 * 8)
+    ctx.fillText(`Gunakan mode landscape biar lebih enak`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 8))
 
-    ctx.font = '12px "Press Start 2P"'
-    ctx.fillText(`Gas Main`, WIDTH * 0.5, buttonY + 32)
+    ctx.font = getFont(12)
+    ctx.fillText(`Gas Main`, WIDTH * 0.5, buttonY + getRatioSize(32))
 
     ctx.restore()
 
@@ -485,7 +486,7 @@ window.addEventListener('load', () => {
     const rect = canvas.getBoundingClientRect()
     const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.changedTouches[0].clientX, e.changedTouches[0].clientY, rect.left, rect.top)
 
-    if (keypad.clickLeftKeypad(x, y)) {
+    if (!keypad.clickRightKeypad(x, y)) {
       keyboard.keys = keyboard.keys.filter(key => key !== DASH)
     }
   })

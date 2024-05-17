@@ -1,5 +1,5 @@
 import { WIDTH, HEIGHT } from './src/constants/canvas.js'
-import { isPotrait } from './src/utils/canvas.js'
+import { isPotrait, getFont, getRatioSize } from './src/utils/canvas.js'
 
 export class Keypad {
   constructor(context) {
@@ -20,7 +20,6 @@ export class Keypad {
 
   draw() {
     // Left Keypad
-    
     this.context.save()
     this.context.globalAlpha = 0.8
     this.context.drawImage(this.image, 0, HEIGHT - this.height * 0.8, this.width * 0.8, this.height * 0.8)
@@ -29,8 +28,8 @@ export class Keypad {
     // this.context.beginPath()
     // this.context.arc(this.keypadRightX + this.height / 2, this.keypadRightY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
     // this.context.stroke()
-    this.context.font = '8px "Press Start 2P"'
-    this.context.fillText(`Dash`, WIDTH / 32, HEIGHT - this.height * 0.4)
+    this.context.font = getFont(8)
+    this.context.fillText(`Dash`, getRatioSize(23), HEIGHT - this.height * 0.4)
     this.context.restore()
 
 
@@ -43,8 +42,8 @@ export class Keypad {
     // this.context.beginPath()
     // this.context.arc(this.keypadLeftX + this.height / 2, this.keypadLeftY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
     // this.context.stroke()
-    this.context.font = '8px "Press Start 2P"'
-    this.context.fillText(`Jump`, WIDTH - this.height * 0.4 - 16, HEIGHT - this.height * 0.4)
+    this.context.font = getFont(8)
+    this.context.fillText(`Jump`, WIDTH - this.height * 0.4 - getRatioSize(16), HEIGHT - this.height * 0.4)
     this.context.restore()
   }
 

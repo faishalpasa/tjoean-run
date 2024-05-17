@@ -1,6 +1,7 @@
 import { HEIGHT, WIDTH } from './src/constants/canvas.js'
 import { TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
 import { DASH, JUMP } from './src/constants/action.js'
+import { getFont, getRatioSize } from './src/utils/canvas.js'
 
 const IMAGE_PLAYER = './assets/characters/player.png'
 const PLAYER_STATE = {
@@ -53,8 +54,8 @@ export class Player {
     this.gameWidth = WIDTH
     this.gameHeight = HEIGHT
 
-    this.player = new Image()
-    this.player.src = IMAGE_PLAYER
+    this.playerImage = new Image()
+    this.playerImage.src = IMAGE_PLAYER
     this.srcWidth = 22
     this.srcHeight = 25
 
@@ -63,9 +64,9 @@ export class Player {
     this.effectWidth = 16
     this.effectHeight = 16
     
-    this.initialPlayerY = this.gameHeight - this.srcHeight + 8 - TILE_HEIGHT - TILE_HEIGHT * TILE_MULTIPLIER
-    this.playerWidth = this.srcWidth * 2
-    this.playerHeight = this.srcHeight * 2
+    this.initialPlayerY = this.gameHeight - getRatioSize(this.srcHeight) + getRatioSize(8) - getRatioSize(TILE_HEIGHT) - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER)
+    this.playerWidth = getRatioSize(this.srcWidth * 2)
+    this.playerHeight = getRatioSize(this.srcHeight * 2)
     this.x = 0
     this.y = this.initialPlayerY
     this.vy = 0
@@ -111,7 +112,7 @@ export class Player {
     // this.context.arc(this.x + this.playerHeight / 2, this.y + this.playerWidth / 2, this.playerWidth / 2, 0, 2 * Math.PI)
     // this.context.stroke()
     // end debugging
-    this.context.drawImage(this.player, (this.startFrame + this.frameX) * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.playerWidth, this.playerHeight)
+    this.context.drawImage(this.playerImage, (this.startFrame + this.frameX) * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.playerWidth, this.playerHeight)
 
     // Run Effect
     this.context.drawImage(this.effect, (this.effectStartFrame + this.effectFrameX) * 16, 0, 16, 16, this.x - this.srcWidth / 2, this.y + this.playerHeight / 2, 16, 16)
@@ -397,7 +398,7 @@ export class Player {
 
   handleAdditionalScore = () => {
     this.context.save()
-    this.context.font = '10px "Press Start 2P"'
+    this.context.font = getFont(10)
     this.context.fillStyle = this.pointMultipler > 1 ? '#E18608' : 'grey'
     if (this.isShowAdditionalScore) {
       if (this.additionalScoreTimeStamp > this.additionalScoreShowDuration) {
