@@ -171,7 +171,7 @@ window.addEventListener('load', () => {
 
   let poisons = []
   let poisonTimer = 0
-  let poisonInterval = 5000
+  let poisonInterval = 10000
   let poisonRandomInterval = 0
   const poisonsList = [
     { 
@@ -216,7 +216,7 @@ window.addEventListener('load', () => {
           speed: 1
         }
       ))
-      poisonInterval = Math.random() * 1000 + 5000
+      poisonInterval = Math.random() * 5000 + 10000
       poisonTimer = 0
     } else {
       poisonTimer += deltaTime
