@@ -121,7 +121,7 @@ window.addEventListener('load', () => {
       additionalScore: 500, 
       type: 'companion',
       sx: 0,
-      sy: 5 * 32,
+      sy: 0,
       sWidth: 32,
       sHeight: 32,
       dWidth: 64,
