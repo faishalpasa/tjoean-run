@@ -13,10 +13,10 @@ import { WIDTH, HEIGHT, TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/can
 import { isPotrait, isInsideRect, getFont, getRatioSize } from './src/utils/canvas.js'
 import { getCanvasCoordinate, getDYMultiplier } from './src/utils/coordinate.js'
 
-const ENEMY_INTERVAL = 2500
+const ENEMY_INTERVAL_SCORE = 5000
 const BOSS_APPEAR_TIMER = 10000
-const BOSS_DISAPPEAR_TIMER = 30000 // 60000
-const LEVEL_UP_SCORE = 10000
+const BOSS_DISAPPEAR_TIMER = 60000
+const LEVEL_UP_SCORE = 15000
 const Y_POSITIONS = [
   { name: 'ground', dyMultipler: 1 },
   { name: 'mid', dyMultipler: 3 },
@@ -101,7 +101,7 @@ window.addEventListener('load', () => {
   let powerUps = []
   let powerUpsTimer = 0
   let powerUpsInterval = 20000
-  let powerUpsnRandomInterval = 0
+  let powerUpsRandomInterval = 0
   const powerUpsList = [
     { 
       name: 'heart2-shine', 
@@ -131,7 +131,7 @@ window.addEventListener('load', () => {
   ]
   const powerUpsPosition = Y_POSITIONS
   const handleShowPowerUps = (deltaTime) => {
-    if (powerUpsTimer > powerUpsInterval + powerUpsnRandomInterval) {
+    if (powerUpsTimer > powerUpsInterval + powerUpsRandomInterval) {
       const randomPowerUp = powerUpsList[Math.floor(Math.random() * powerUpsList.length)]
       const randomPowerUpPosition = powerUpsPosition[Math.floor(Math.random() * powerUpsPosition.length)]
       const yPosition = randomPowerUp.position ? getDYMultiplier(randomPowerUp.position) : randomPowerUpPosition.dyMultipler
@@ -169,6 +169,65 @@ window.addEventListener('load', () => {
     powerUps = powerUps.filter(powerUp => !powerUp.isOutOufScreen)
   }
 
+  let poisons = []
+  let poisonTimer = 0
+  let poisonInterval = 5000
+  let poisonRandomInterval = 0
+  const poisonsList = [
+    { 
+      name: 'putu-cake',
+      maxFrame: 0, 
+      additionalScore: -1000, 
+      position: 'ground',
+      type: 'poison',
+      sx: 0,
+      sy: 0,
+      sWidth: 32, 
+      sHeight: 32,
+      dWidth: 32, 
+      dHeight: 32,
+    },
+  ]
+  const poisonPosition = Y_POSITIONS
+  const handleShowPoisons = (deltaTime) => {
+    if (poisonTimer > poisonInterval + poisonRandomInterval) {
+      const randomPoison = poisonsList[Math.floor(Math.random() * poisonsList.length)]
+      const randomPoisonPosition = poisonPosition[Math.floor(Math.random() * poisonPosition.length)]
+      const yPosition = randomPoison.position ? getDYMultiplier(randomPoison.position) : randomPoisonPosition.dyMultipler
+      const randomPowerUpSrc = `./assets/poisons/${randomPoison.name}.png`
+      powerUps.push(new Sprite(
+        canvasContext,
+        {
+          image: {
+            src: randomPowerUpSrc,
+            sx: randomPoison.sx,
+            sy: randomPoison.sy,
+            sWidth: randomPoison.sWidth,
+            sHeight: randomPoison.sHeight,
+            dx: canvasContext.width,
+            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(randomPoison.dHeight) * yPosition,
+            dWidth: getRatioSize(randomPoison.dWidth),
+            dHeight: getRatioSize(randomPoison.dHeight)
+          },
+          maxFrame: randomPoison.maxFrame,
+          additionalScore: randomPoison.additionalScore,
+          type: randomPoison.type,
+          name: randomPoison.name,
+          speed: 1
+        }
+      ))
+      poisonInterval = Math.random() * 1000 + 5000
+      poisonTimer = 0
+    } else {
+      poisonTimer += deltaTime
+    }
+    poisons.forEach((item) => {
+      item.draw(ctx)
+      item.update(deltaTime)
+    })
+    poisons = poisons.filter((item) => !item.isOutOufScreen)
+  }
+
   let enemies = []
   let enemyTimer = 0
   let enemyInterval = game.enemyInterval
@@ -176,7 +235,6 @@ window.addEventListener('load', () => {
   
   const handleShowEnemies = (deltaTime) => {
     const casualEnemy = [
-      // { name: 'spikes-1', maxFrame: 1, position: 'ground', speed: 1 },
       { name: 'mushroom-walk', maxFrame: 9, position: 'ground', speed: 3, },
       { name: 'ghost1_fly', maxFrame: 5, position: 'mid', speed: 5 },
       { name: 'ghost1_fly', maxFrame: 5, position: 'fly', speed: 7 },
@@ -235,25 +293,25 @@ window.addEventListener('load', () => {
   const handleEnemyInterval = () => {
     const bossMultiplier = game.isBossAppear ? 0.5 : 1
     
-    if (game.score < ENEMY_INTERVAL * 1) {
+    if (game.score < ENEMY_INTERVAL_SCORE * 1) {
       game.enemyInterval = 1000 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 2) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 2) {
       game.enemyInterval = 800 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 3) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 3) {
       game.enemyInterval = 600 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 4) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 4) {
       game.enemyInterval = 400 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 5) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 5) {
       game.enemyInterval = 200 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 6) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 6) {
       game.enemyInterval = 100 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 7) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 7) {
       game.enemyInterval = 50 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 8) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 8) {
       game.enemyInterval = 25 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL * 9) {
+    } else if (game.score < ENEMY_INTERVAL_SCORE * 9) {
       game.enemyInterval = 10 * bossMultiplier
-    } else if (game.score > ENEMY_INTERVAL * 10) {
+    } else if (game.score > ENEMY_INTERVAL_SCORE * 10) {
       game.enemyInterval = 5 * bossMultiplier
     }
   }
@@ -325,6 +383,7 @@ window.addEventListener('load', () => {
     handleShowCoins(deltaTime)
     handleShowEnemies(deltaTime)
     handleShowPowerUps(deltaTime)
+    handleShowPoisons(deltaTime)
     handleStatus(ctx)
 
     boss.draw(ctx)

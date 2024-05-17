@@ -53,7 +53,6 @@ export class Boss {
     }
     
     if (game.isBossAppear) {
-      console.log(this.dx, this.canvasContext.width - this.dWidth, this.move)
       if (this.dx <= this.canvasContext.width - this.dWidth && this.move === 'left') {
         this.move = 'right'
       } 

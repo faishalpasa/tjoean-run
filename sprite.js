@@ -81,6 +81,11 @@ export class Sprite {
       this.effect.frameX = 30
       this.effect.frameY = 10
     }
+    if (this.type === 'poison') {
+      this.effectImage.src = './assets/effects/green.png'
+      this.effect.initialFrameX = 14
+      this.effect.maxFrameX = 18
+    }
 
   }
 

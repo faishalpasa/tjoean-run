@@ -92,7 +92,7 @@ export class Player {
     this.invincibleTimer = 0
     this.frameInterval = 1000 / this.fps
 
-    this.additionalScores = []
+    this.additionalScores = 0
     this.isShowAdditionalScore = false
     this.additionalScoreTimeStamp = 0
     this.additionalScoreShowDuration = 500
@@ -121,7 +121,7 @@ export class Player {
     //  Companion
     if (this.gameContext.companion) {
       this.companion = this.gameContext.companion
-      const frameYDiff = 0.5
+      const frameYDiff = getRatioSize(0.5)
       if (this.companion.name === 'neko') {
         this.companion.sy = 6
         this.companion.maxFrame = 3
@@ -235,7 +235,7 @@ export class Player {
       if (distance < (this.playerWidth / 2) + (coin.sWidth / 2)) {
         coin.isOutOufScreen = true
         this.isShowAdditionalScore = true
-        this.additionalScores.push(coin.additionalScore)
+        this.additionalScores = coin.additionalScore
 
         console.log(this.pointMultipler)
 
@@ -263,7 +263,7 @@ export class Player {
       if (distance < (this.playerWidth / 2) + (powerUp.sWidth / 2)) {
         powerUp.isOutOufScreen = true
         this.isShowAdditionalScore = true
-        this.additionalScores.push(powerUp.additionalScore)
+        this.additionalScores = powerUp.additionalScore
         game.score += powerUp.additionalScore
         
         if (powerUp.type === 'health') {
@@ -330,7 +330,7 @@ export class Player {
     this.vy = 0
     this.xy = 0
     this.frame = 0
-    this.additionalScores = []
+    this.additionalScores = 0
     this.isShowAdditionalScore = false
     this.additionalScoreTimeStamp = 0
     this.maxFrame = PLAYER_STATE.IDLE.maxFrame
@@ -403,14 +403,18 @@ export class Player {
     this.context.fillStyle = this.pointMultipler > 1 ? '#E18608' : 'grey'
     if (this.isShowAdditionalScore) {
       if (this.additionalScoreTimeStamp > this.additionalScoreShowDuration) {
-        this.additionalScores.splice(0, 1)
+        this.additionalScores = 0
         this.isShowAdditionalScore = false
         this.additionalScoreTimeStamp = 0
       } else {
         this.additionalScoreTimeStamp += 10
 
-        const score = this.additionalScores[0] * this.pointMultipler
-        this.context.fillText(`+${score}`, this.x, this.y)
+        console.log(this.additionalScores)
+
+        const score = this.additionalScores * this.pointMultipler
+        const scoreText = score > 0 ? `+${score}` : `${score}`
+        this.context.fillStyle = score > 0 ? this.context.fillStyle : 'red'
+        this.context.fillText(`${scoreText}`, this.x, this.y)
       }
     }
     this.context.restore()
