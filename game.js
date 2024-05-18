@@ -1,3 +1,5 @@
+import { ENEMY_INTERVAL } from "./src/constants/enemy.js"
+
 export class Game {
   constructor(canvasContext) {
     this.canvasContext = canvasContext
@@ -7,7 +9,7 @@ export class Game {
     this.isPlaying = false
     this.isGameOver = false
     this.isBossAppear = false
-    this.enemyInterval = 1000
+    this.enemyInterval = ENEMY_INTERVAL
     this.lastTime = 0
     this.level = 1
 

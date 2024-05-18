@@ -10,3 +10,11 @@ export const HEIGHT = isMobile ? tabletHeight : 400
 export const TILE_MULTIPLIER = 3
 export const TILE_HEIGHT = 32
 export const TILE_WIDTH = 32
+
+export default {
+  WIDTH,
+  HEIGHT,
+  TILE_MULTIPLIER,
+  TILE_HEIGHT,
+  TILE_WIDTH,
+}

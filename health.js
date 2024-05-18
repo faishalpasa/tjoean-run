@@ -1,12 +1,12 @@
+import { WIDTH, HEIGHT } from "./src/constants/canvas.js"
 import { getRatioSize } from "./src/utils/canvas.js"
 
 export class Health {
-  constructor(canvasContext, game) {
+  constructor(game) {
     this.gameContext = game
-    this.canvasContext = canvasContext
 
     // Position
-    this.x = this.canvasContext.width - getRatioSize(40)
+    this.x = WIDTH - getRatioSize(40)
     this.sWidth = 16
     this.sHeight = 16
     this.dy = 0
@@ -20,10 +20,13 @@ export class Health {
     // Image
     const imageShine = './assets/coins/heart1-shine.png'
     const imageEmpty = './assets/coins/heart1-empty.png'
+    const imageExtra = './assets/coins/heart2-shine.png'
     this.heartImageShine = new Image()
     this.heartImageShine.src = imageShine
     this.heartImageEmpty = new Image()
     this.heartImageEmpty.src = imageEmpty
+    this.heartImageExtra = new Image()
+    this.heartImageExtra.src = imageExtra
 
     // FPS
     this.fps = 10
@@ -34,6 +37,9 @@ export class Health {
   draw(context) {
     const totalHealth = this.gameContext.totalHealth
     const currentHealth = this.gameContext.health
+    const extraHealth = currentHealth - totalHealth
+
+    console.log({totalHealth, currentHealth, extraHealth})
 
     for (let i = 0; i < totalHealth; i++) {
       const imageHeart = i < currentHealth ? this.heartImageShine : this.heartImageEmpty
@@ -41,6 +47,15 @@ export class Health {
       const sy = this.frameY * this.sHeight
       const dx = this.x - (this.dWidth - getRatioSize(8)) * i
       context.drawImage(imageHeart, sx, sy, this.sWidth, this.sHeight, dx, this.dy, this.dWidth, this.dHeight)
+    }
+
+    if (extraHealth) {
+      for (let i = 0; i < extraHealth; i++) {
+        const sx = i < currentHealth ? this.frameX * this.sWidth : 0
+        const sy = this.frameY * this.sHeight
+        const dx = this.x - (totalHealth * (this.dWidth - getRatioSize(8))) - getRatioSize(4) - (this.dWidth - getRatioSize(2)) * i
+        context.drawImage(this.heartImageExtra, sx, sy, this.sWidth, this.sHeight, dx, this.dy, this.dWidth, this.dHeight)
+      }
     }
   }
 

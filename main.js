@@ -7,21 +7,15 @@ import { Tile } from './tile.js'
 import { Health } from './health.js'
 import { Boss } from './boss.js'
 import { Keypad } from './keypad.js'
-import { Sprite } from './sprite.js'
-import { DASH, JUMP } from "./src/constants/action.js"
-import { WIDTH, HEIGHT, TILE_HEIGHT, TILE_MULTIPLIER } from './src/constants/canvas.js'
+import { DASH, JUMP } from './src/constants/action.js'
+import { WIDTH, HEIGHT } from './src/constants/canvas.js'
+import { BOSS_APPEAR_TIMER, BOSS_DISAPPEAR_TIMER, BOSS_MAX_LEVEL } from './src/constants/boss.js'
 import { isPotrait, isInsideRect, getFont, getRatioSize } from './src/utils/canvas.js'
-import { getCanvasCoordinate, getDYMultiplier } from './src/utils/coordinate.js'
-
-const ENEMY_INTERVAL_SCORE = 5000
-const BOSS_APPEAR_TIMER = 10000
-const BOSS_DISAPPEAR_TIMER = 60000
-const LEVEL_UP_SCORE = 15000
-const Y_POSITIONS = [
-  { name: 'ground', dyMultipler: 1 },
-  { name: 'mid', dyMultipler: 3 },
-  { name: 'fly', dyMultipler: 5 }
-]
+import { getCanvasCoordinate } from './src/utils/coordinate.js'
+import { handleEnemyInterval, handleShowEnemies } from './src/animations/enemy.js'
+import { handleShowCoins } from './src/animations/coin.js'
+import { handleShowPowerUps } from './src/animations/powerUps.js'
+import { handleShowPoisons } from './src/animations/poison.js'
 
 window.addEventListener('load', () => {
   const canvas = document.getElementById('canvas')
@@ -31,7 +25,7 @@ window.addEventListener('load', () => {
 
   const highScore = localStorage.getItem('tjoean_run')
 
-  const canvasContext = {
+  const canvasContext = { // TODO: Deprecated, move to WIDTH and HEIGHT
     height: CANVAS_HEIGHT,
     width: CANVAS_WIDTH
   }
@@ -46,281 +40,29 @@ window.addEventListener('load', () => {
     new Background(canvasContext, './assets/backgrounds/background4.png', 1),
   ]
   const player = new Player(ctx, game) 
-  const health = new Health(canvasContext, game)
-  const boss = new Boss(canvasContext, { name: 'boss-1', size: 160, maxFrame: 0, additionalScore: 1000, sizeMultipler: 1.5 })
+  const health = new Health(game)
   const keypad = new Keypad(ctx)
+  const boss = new Boss(game, { 
+    maxFrame: 0,
+    image: {
+      sx: 0,
+      sy: 0,
+      sWidth: 72,
+      sHeight: 72,
+      dx: 0,
+      dy: 0,
+      dWidth: 160,
+      dHeight: 160
+    },
+  })
 
   let coins = []
-  let coinTimer = 0
-  let coinInterval = 1000
-  let coinRandomInterval = Math.random() * 1000 + 1000
-  const coinList = [
-    { name: 'coin1', maxFrame: 9, additionalScore: 100, type: 'coin' },
-    { name: 'coin2', maxFrame: 9, additionalScore: 50, type: 'coin' },
-    { name: 'diamond', maxFrame: 4, additionalScore: 300, type: 'coin' }
-  ]
-  const coinPosition = Y_POSITIONS
-  const handleShowCoins = (deltaTime) => {
-    if (coinTimer > coinInterval + coinRandomInterval) {
-      const randomCoin = coinList[Math.floor(Math.random() * coinList.length)]
-      const randomCoinPosition = coinPosition[Math.floor(Math.random() * coinPosition.length)]
-      const yPosition = randomCoin.position ? getDYMultiplier(randomCoin.position) : randomCoinPosition.dyMultipler
-      const randomCoinSrc = `./assets/coins/${randomCoin.name}.png`
-      coins.push(new Sprite(
-        canvasContext,
-        {
-          image: {
-            src: randomCoinSrc,
-            sx: 0,
-            sy: 0,
-            sWidth: 16,
-            sHeight: 16,
-            dx: canvasContext.width,
-            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(32) * yPosition,
-            dWidth: getRatioSize(32),
-            dHeight: getRatioSize(32)
-          },
-          maxFrame: randomCoin.maxFrame,
-          additionalScore: randomCoin.additionalScore,
-          type: randomCoin.type,
-          speed: 2
-        }
-      ))
-      coinRandomInterval = Math.random() * 5000
-      coinTimer = 0
-    } else {
-      coinTimer += deltaTime
-    }
-    coins.forEach((coin) => {
-      coin.draw(ctx)
-      coin.update(deltaTime)
-    })
-    coins = coins.filter(coin => !coin.isOutOufScreen)
-  }
-
   let powerUps = []
-  let powerUpsTimer = 0
-  let powerUpsInterval = 20000
-  let powerUpsRandomInterval = 0
-  const powerUpsList = [
-    { 
-      name: 'heart2-shine', 
-      maxFrame: 5, 
-      additionalScore: 500, 
-      type: 'health',
-      sx: 0,
-      sy: 0,
-      sWidth: 16,
-      sHeight: 16,
-      dWidth: 32,
-      dHeight: 32
-    },
-    { 
-      name: 'neko', 
-      maxFrame: 7, 
-      additionalScore: 500, 
-      type: 'companion',
-      sx: 0,
-      sy: 0,
-      sWidth: 32,
-      sHeight: 32,
-      dWidth: 64,
-      dHeight: 64,
-      position: 'ground'
-    },
-  ]
-  const powerUpsPosition = Y_POSITIONS
-  const handleShowPowerUps = (deltaTime) => {
-    if (powerUpsTimer > powerUpsInterval + powerUpsRandomInterval) {
-      const randomPowerUp = powerUpsList[Math.floor(Math.random() * powerUpsList.length)]
-      const randomPowerUpPosition = powerUpsPosition[Math.floor(Math.random() * powerUpsPosition.length)]
-      const yPosition = randomPowerUp.position ? getDYMultiplier(randomPowerUp.position) : randomPowerUpPosition.dyMultipler
-      const randomPowerUpSrc = `./assets/power_ups/${randomPowerUp.name}.png`
-      powerUps.push(new Sprite(
-        canvasContext,
-        {
-          image: {
-            src: randomPowerUpSrc,
-            sx: randomPowerUp.sx,
-            sy: randomPowerUp.sy,
-            sWidth: randomPowerUp.sWidth,
-            sHeight: randomPowerUp.sHeight,
-            dx: canvasContext.width,
-            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(randomPowerUp.dHeight) * yPosition,
-            dWidth: getRatioSize(randomPowerUp.dWidth),
-            dHeight: getRatioSize(randomPowerUp.dHeight)
-          },
-          maxFrame: randomPowerUp.maxFrame,
-          additionalScore: randomPowerUp.additionalScore,
-          type: randomPowerUp.type,
-          name: randomPowerUp.name,
-          speed: 2
-        }
-      ))
-      powerUpsInterval = Math.random() * 10000 + 20000
-      powerUpsTimer = 0
-    } else {
-      powerUpsTimer += deltaTime
-    }
-    powerUps.forEach(powerUp => {
-      powerUp.draw(ctx)
-      powerUp.update(deltaTime)
-    })
-    powerUps = powerUps.filter(powerUp => !powerUp.isOutOufScreen)
-  }
-
   let poisons = []
-  let poisonTimer = 0
-  let poisonInterval = 10000
-  let poisonRandomInterval = 0
-  const poisonsList = [
-    { 
-      name: 'putu-cake',
-      maxFrame: 0, 
-      additionalScore: -1000, 
-      position: 'ground',
-      type: 'poison',
-      sx: 0,
-      sy: 0,
-      sWidth: 24, 
-      sHeight: 24,
-      dWidth: 32, 
-      dHeight: 32,
-    },
-  ]
-  const poisonPosition = Y_POSITIONS
-  const handleShowPoisons = (deltaTime) => {
-    if (poisonTimer > poisonInterval + poisonRandomInterval) {
-      const randomPoison = poisonsList[Math.floor(Math.random() * poisonsList.length)]
-      const randomPoisonPosition = poisonPosition[Math.floor(Math.random() * poisonPosition.length)]
-      const yPosition = randomPoison.position ? getDYMultiplier(randomPoison.position) : randomPoisonPosition.dyMultipler
-      const randomPowerUpSrc = `./assets/poisons/${randomPoison.name}.png`
-      powerUps.push(new Sprite(
-        canvasContext,
-        {
-          image: {
-            src: randomPowerUpSrc,
-            sx: randomPoison.sx,
-            sy: randomPoison.sy,
-            sWidth: randomPoison.sWidth,
-            sHeight: randomPoison.sHeight,
-            dx: canvasContext.width,
-            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(randomPoison.dHeight) * yPosition,
-            dWidth: getRatioSize(randomPoison.dWidth),
-            dHeight: getRatioSize(randomPoison.dHeight)
-          },
-          maxFrame: randomPoison.maxFrame,
-          additionalScore: randomPoison.additionalScore,
-          type: randomPoison.type,
-          name: randomPoison.name,
-          speed: 1
-        }
-      ))
-      poisonInterval = Math.random() * 5000 + 10000
-      poisonTimer = 0
-    } else {
-      poisonTimer += deltaTime
-    }
-    poisons.forEach((item) => {
-      item.draw(ctx)
-      item.update(deltaTime)
-    })
-    poisons = poisons.filter((item) => !item.isOutOufScreen)
-  }
-
   let enemies = []
-  let enemyTimer = 0
-  let enemyInterval = game.enemyInterval
-  let enemyRandomInterval = Math.random() * 1000 + 100
-  
-  const handleShowEnemies = (deltaTime) => {
-    const casualEnemy = [
-      { name: 'mushroom-walk', maxFrame: 9, position: 'ground', speed: 3, },
-      { name: 'ghost1_fly', maxFrame: 5, position: 'mid', speed: 5 },
-      { name: 'ghost1_fly', maxFrame: 5, position: 'fly', speed: 7 },
-    ]
-    const bossEnemy = [
-      { 
-        name: 'lele', 
-        maxFrame: 5, 
-        speed: 7, 
-        sWidth: 48, 
-        sHeight: 48,
-        dWidth: 64, 
-        dHeight: 64,
-      },
-    ]
-    const enemyList = game.isBossAppear ? bossEnemy : casualEnemy
-    const enemyPosition = Y_POSITIONS
-    if (enemyTimer > enemyInterval + enemyRandomInterval) {
-      const randomEnemy = enemyList[Math.floor(Math.random() * enemyList.length)]
-      const randomEnemyPosition = enemyPosition[Math.floor(Math.random() * enemyPosition.length)]
-      const yPosition = randomEnemy.position ? getDYMultiplier(randomEnemy.position) : randomEnemyPosition.dyMultipler
-      enemies.push(new Sprite(
-        canvasContext,
-        {
-          image: {
-            src: `./assets/enemies/${randomEnemy.name}.png`,
-            sx: 0,
-            sy: 0,
-            sWidth: randomEnemy.sWidth || 16,
-            sHeight: randomEnemy.sHeight || 16,
-            dx: canvasContext.width,
-            dy: canvasContext.height - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - getRatioSize(randomEnemy.dWidth || 32) * yPosition,
-            dWidth: getRatioSize(randomEnemy.dWidth || 32),
-            dHeight: getRatioSize(randomEnemy.dHeight || 32)
-          },
-          maxFrame: randomEnemy.maxFrame,
-          additionalScore: 0,
-          type: 'enemy',
-          speed: randomEnemy.speed,
-        }
-      ))
-
-      enemyInterval = game.enemyInterval
-      enemyRandomInterval = Math.random() * game.enemyInterval + 100
-      enemyTimer = 0
-    } else {
-      enemyTimer += deltaTime
-    }
-    enemies.forEach(enemy => {
-      enemy.draw(ctx)
-      enemy.update(deltaTime)
-    })
-    enemies = enemies.filter(enemy => !enemy.isOutOufScreen)
-  }
-
-  const handleEnemyInterval = () => {
-    const bossMultiplier = game.isBossAppear ? 0.5 : 1
-    
-    if (game.score < ENEMY_INTERVAL_SCORE * 1) {
-      game.enemyInterval = 1000 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 2) {
-      game.enemyInterval = 800 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 3) {
-      game.enemyInterval = 600 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 4) {
-      game.enemyInterval = 400 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 5) {
-      game.enemyInterval = 200 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 6) {
-      game.enemyInterval = 100 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 7) {
-      game.enemyInterval = 50 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 8) {
-      game.enemyInterval = 25 * bossMultiplier
-    } else if (game.score < ENEMY_INTERVAL_SCORE * 9) {
-      game.enemyInterval = 10 * bossMultiplier
-    } else if (game.score > ENEMY_INTERVAL_SCORE * 10) {
-      game.enemyInterval = 5 * bossMultiplier
-    }
-  }
 
   const handleLevelUp = () => {
-    if (game.score > LEVEL_UP_SCORE * game.level) {
-      game.level = game.level + 1
-      game.enemyInterval = 1000
-    }
+    game.level = game.level + 1
   }
 
   let bossAppearTimer = 0
@@ -333,6 +75,7 @@ window.addEventListener('load', () => {
         game.isBossAppear = false
         bossAppearTimer = 0
         bossDisapearTimer = 0
+        handleLevelUp()
       }
     } else {
       bossDisapearTimer += deltaTime
@@ -340,14 +83,21 @@ window.addEventListener('load', () => {
   }
 
   const handleStatus = (context) => {
-    game.score = game.score += 1
+    if (!game.isGameOver) {
+      game.score = game.score += 1
+    }
+
+    const boxImage = new Image()
+    boxImage.src = './assets/gui/box.png'
+    ctx.drawImage(boxImage, 0, 0, getRatioSize(200), getRatioSize(60))
     
     context.save()
     context.font = getFont(10)
     context.fillStyle = '#006E5A'
     context.fillText(`High Score: ${highScore}`, getRatioSize(10), getRatioSize(20))
     context.fillStyle = '#001E5E'
-    context.fillText(`Score: ${game.score}`, getRatioSize(10), getRatioSize(35))
+    context.fillText(`Level: ${game.level}`, getRatioSize(10), getRatioSize(35))
+    context.fillText(`Score: ${game.score}`, getRatioSize(10), getRatioSize(50))
     context.restore()
   }
 
@@ -371,8 +121,10 @@ window.addEventListener('load', () => {
       backgroundStack.update(idx, game)
     })
 
-    player.draw()
-    player.update(game, keyboard, deltaTime, coins, enemies, powerUps)
+    if (!game.isGameOver) {
+      player.draw()
+      player.update(game, keyboard, deltaTime, { coins, enemies, powerUps, poisons })
+    }
 
     tile.draw(ctx)
     tile.update()
@@ -380,23 +132,26 @@ window.addEventListener('load', () => {
     health.draw(ctx)
     health.update(deltaTime)
     
-    handleShowCoins(deltaTime)
-    handleShowEnemies(deltaTime)
-    handleShowPowerUps(deltaTime)
-    handleShowPoisons(deltaTime)
-    handleStatus(ctx)
+    coins = handleShowCoins({ canvasContext: ctx, deltaTime, coins })
+    enemies = handleShowEnemies({ canvasContext: ctx, game, deltaTime, enemies })
+    powerUps = handleShowPowerUps({ canvasContext: ctx, deltaTime, powerUps })
+    poisons = handleShowPoisons({ canvasContext: ctx, deltaTime, poisons })
+
 
     boss.draw(ctx)
     boss.update(game)
-
-    handleLevelUp()
     handleBossApear(deltaTime)
-    handleEnemyInterval()
 
-    keypad.draw()
+    handleStatus(ctx)
+    handleEnemyInterval(game)
+
+    if (!game.isGameOver) {
+      keypad.draw()
+    }
 
     game.update()
     game.saveScore()
+
     if (game.isGameOver) {
       const buttonImage = new Image()
       buttonImage.src = './assets/gui/button-large-round.png'
@@ -411,12 +166,11 @@ window.addEventListener('load', () => {
       ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + getRatioSize(32))
       ctx.restore()
 
-      setTimeout(() => {
-        cancelAnimationFrame(startGameAnimation)
-      },  500)
-    } else {
-      startGameAnimation = requestAnimationFrame(startGame)
+      game.isBossAppear = false
+      bossAppearTimer = 0
+      bossDisapearTimer = 0
     }
+    startGameAnimation = requestAnimationFrame(startGame)
   }
 
   // Start Menu
@@ -479,30 +233,27 @@ window.addEventListener('load', () => {
   }
 
   const handleRestartGame = () => {
-    // if (game.isGameOver) {
     backgroundStacks.forEach(backgroundStack => {
       backgroundStack.restart()
     })
     coins = []
-    coinTimer = 0
     enemies = []
-    enemyTimer = 0
-    bossAppearTimer = 0
-    bossDisapearTimer = 0
+    powerUps = []
+    poisons = []
+    game.restart()
     startGame(0)
-    // }
   }
 
   const handleRequestFullScreen = () => {
-    if (canvas.requestFullscreen) {
-      canvas.requestFullscreen()
-    } else if (canvas.webkitRequestFullscreen) {
-      canvas.webkitRequestFullscreen()
-    } else if (canvas.mozRequestFullScreen) {
-      canvas.mozRequestFullScreen()
-    } else if (canvas.msRequestFullscreen) {
-      canvas.msRequestFullscreen()
-    }
+    // if (canvas.requestFullscreen) {
+    //   canvas.requestFullscreen()
+    // } else if (canvas.webkitRequestFullscreen) {
+    //   canvas.webkitRequestFullscreen()
+    // } else if (canvas.mozRequestFullScreen) {
+    //   canvas.mozRequestFullScreen()
+    // } else if (canvas.msRequestFullscreen) {
+    //   canvas.msRequestFullscreen()
+    // }
   }
 
   canvas.addEventListener('click', (e) => {

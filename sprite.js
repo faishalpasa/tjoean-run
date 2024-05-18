@@ -1,5 +1,5 @@
 export class Sprite {
-  constructor(canvasContext, data = { 
+  constructor(data = { 
     name: '',
     type: 'coin',
     maxFrame: 0,
@@ -21,7 +21,6 @@ export class Sprite {
   }) {
     this.name = data.name
     this.type = data.type
-    this.canvasContext = canvasContext
     this.type = data.type
     this.image = new Image()
     this.image.src = data.image.src

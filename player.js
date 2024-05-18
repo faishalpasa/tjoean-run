@@ -112,6 +112,7 @@ export class Player {
     // this.context.arc(this.x + this.playerHeight / 2, this.y + this.playerWidth / 2, this.playerWidth / 2, 0, 2 * Math.PI)
     // this.context.stroke()
     // end debugging
+    
     this.context.drawImage(this.playerImage, (this.startFrame + this.frameX) * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.playerWidth, this.playerHeight)
 
     // Run Effect
@@ -121,16 +122,14 @@ export class Player {
     //  Companion
     if (this.gameContext.companion) {
       this.companion = this.gameContext.companion
-      const frameYDiff = getRatioSize(0.5)
       if (this.companion.name === 'neko') {
+        const frameYDiff = getRatioSize(1)
         this.companion.sy = 6
         this.companion.maxFrame = 3
         this.pointMultipler = 2
 
-        this.context.drawImage(this.companion.image, this.companion.sx * this.companion.sWidth, this.companion.sy * this.companion.sHeight - frameYDiff, this.companion.sWidth, this.companion.sHeight, this.x - this.playerWidth * 0.8, this.companion.dy, this.companion.dWidth, this.companion.dHeight)
+        this.context.drawImage(this.companion.image, this.companion.sx * this.companion.sWidth, this.companion.sy * this.companion.sHeight + frameYDiff, this.companion.sWidth, this.companion.sHeight, this.x - this.playerWidth * 0.8, this.companion.dy, this.companion.dWidth, this.companion.dHeight)
       }
-      
-
     }
   }
 
@@ -178,10 +177,11 @@ export class Player {
   
   // End action event
 
-  update(game, keyboards, deltaTime, coins, enemies, powerUps) {
+  update(game, keyboards, deltaTime, { coins, enemies, powerUps, poisons }) {
     this.x += this.speed
     this.run(keyboards)
     this.jump(keyboards)
+    this.invincibleTimer += deltaTime
 
     // animate
     if (this.frameTimer > this.frameInterval) {
@@ -237,8 +237,6 @@ export class Player {
         this.isShowAdditionalScore = true
         this.additionalScores = coin.additionalScore
 
-        console.log(this.pointMultipler)
-
         game.score += coin.additionalScore * this.pointMultipler
       }
     })
@@ -276,7 +274,30 @@ export class Player {
       }
     })
 
-    this.invincibleTimer += deltaTime
+    //collision with poison
+    poisons.forEach((poison) => {
+      const playerCoordinateX = this.x + this.playerWidth / 2
+      const playerCoordinateY = this.y + this.playerHeight / 2
+      const coinCoordinateX = poison.dx + poison.dWidth / 2
+      const coinCoordinateY = poison.dy + poison.dHeight / 2
+      const dx = coinCoordinateX - playerCoordinateX
+      const dy = coinCoordinateY - playerCoordinateY
+      const distance = Math.sqrt(dx * dx + dy * dy)
+
+      // start debugging
+      // this.context.beginPath()
+      // this.context.moveTo(playerCoordinateX, playerCoordinateY)
+      // this.context.lineTo(coinCoordinateX, coinCoordinateY)
+      // this.context.stroke()
+      // end debugging
+
+      if (distance < (this.playerWidth / 2) + (poison.sWidth / 2)) {
+        poison.isOutOufScreen = true
+        this.isShowAdditionalScore = true
+        this.additionalScores = poison.additionalScore
+        game.score += poison.additionalScore
+      }
+    })
 
     //collision with enemies
     enemies.forEach((enemy) => {
@@ -408,8 +429,6 @@ export class Player {
         this.additionalScoreTimeStamp = 0
       } else {
         this.additionalScoreTimeStamp += 10
-
-        console.log(this.additionalScores)
 
         const score = this.additionalScores * this.pointMultipler
         const scoreText = score > 0 ? `+${score}` : `${score}`
