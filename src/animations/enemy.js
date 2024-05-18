@@ -22,7 +22,6 @@ export const handleShowEnemies = ({ canvasContext, game, deltaTime, enemies }) =
   const enemyPosition = Y_POSITIONS
   if (enemyTimer > enemyInterval + enemyRandomInterval) {
     const randomEnemy = enemyList[Math.floor(Math.random() * enemyList.length)]
-    console.log(randomEnemy, game.level, getCurrentBossLevel(game.level) - 1)
     const randomEnemyPosition = enemyPosition[Math.floor(Math.random() * enemyPosition.length)]
     const yPosition = randomEnemy.position ? getDYMultiplier(randomEnemy.position) : randomEnemyPosition.dyMultipler
     enemies.push(new Sprite(
@@ -41,7 +40,7 @@ export const handleShowEnemies = ({ canvasContext, game, deltaTime, enemies }) =
         maxFrame: randomEnemy.maxFrame,
         additionalScore: 0,
         type: 'enemy',
-        speed: randomEnemy.speed,
+        speed: randomEnemy.speed * game.enemySpeedMultiplier,
       }
     ))
 
@@ -66,27 +65,53 @@ export const handleEnemyInterval = (game) => {
   const bossMultiplier = game.isBossAppear ? 0.5 : 1
   
   if (game.level === 1) {
-    game.enemyInterval = 1000 * bossMultiplier
+    game.enemyInterval = 1024 * bossMultiplier
   } else if (game.level === 2) {
-    game.enemyInterval = 800 * bossMultiplier
+    game.enemyInterval = 512 * bossMultiplier
   } else if (game.level === 3) {
-    game.enemyInterval = 600 * bossMultiplier
+    game.enemyInterval = 256 * bossMultiplier
   } else if (game.level === 4) {
-    game.enemyInterval = 400 * bossMultiplier
-  } else if (game.level === 4) {
-    game.enemyInterval = 200 * bossMultiplier
+    game.enemyInterval = 128 * bossMultiplier
   } else if (game.level === 5) {
-    game.enemyInterval = 100 * bossMultiplier
-  } else if (game.level === 5) {
-    game.enemyInterval = 80 * bossMultiplier
+    game.enemyInterval = 64 * bossMultiplier
+  } else if (game.level === 6) {
+    game.enemyInterval = 32 * bossMultiplier
   } else if (game.level === 7) {
-    game.enemyInterval = 50 * bossMultiplier
+    game.enemyInterval = 16 * bossMultiplier
   } else if (game.level === 8) {
-    game.enemyInterval = 25 * bossMultiplier
+    game.enemyInterval = 8 * bossMultiplier
   } else if (game.level === 9) {
-    game.enemyInterval = 10 * bossMultiplier
+    game.enemyInterval = 4 * bossMultiplier
   } else if (game.level >= 10) {
-    game.enemyInterval = 5 * bossMultiplier
+    game.enemyInterval = 2 * bossMultiplier
+  }
+
+  return game
+}
+
+export const handleEnemySpeedMultiplier = (game) => {
+  const bossMultiplier = game.isBossAppear ? 0.5 : 1
+
+  if (game.level === 1) {
+    game.enemySpeedMultiplier = 1 * bossMultiplier
+  } else if (game.level === 2) {
+    game.enemySpeedMultiplier = 1.5 * bossMultiplier
+  } else if (game.level === 3) {
+    game.enemySpeedMultiplier = 2 * bossMultiplier
+  } else if (game.level === 4) {
+    game.enemySpeedMultiplier = 2.5 * bossMultiplier
+  } else if (game.level === 5) {
+    game.enemySpeedMultiplier = 3 * bossMultiplier
+  } else if (game.level === 6) {
+    game.enemySpeedMultiplier = 3.5 * bossMultiplier
+  } else if (game.level === 7) {
+    game.enemySpeedMultiplier = 4 * bossMultiplier
+  } else if (game.level === 8) {
+    game.enemySpeedMultiplier = 4.5 * bossMultiplier
+  } else if (game.level === 9) {
+    game.enemySpeedMultiplier = 5 * bossMultiplier
+  } else if (game.level >= 10) {
+    game.enemySpeedMultiplier = 5.5 * bossMultiplier
   }
 
   return game

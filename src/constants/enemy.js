@@ -1,4 +1,5 @@
 export const ENEMY_INTERVAL = 1000
+export const ENEMY_SPEED_MULTIPLIER = 1
 export const ENEMY_INTERVAL_SCORE = 5000
 
 export const CASUAL_ENEMIES = [

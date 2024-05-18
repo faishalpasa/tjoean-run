@@ -12,7 +12,7 @@ import { WIDTH, HEIGHT } from './src/constants/canvas.js'
 import { BOSS_APPEAR_TIMER, BOSS_DISAPPEAR_TIMER, BOSS_MAX_LEVEL } from './src/constants/boss.js'
 import { isPotrait, isInsideRect, getFont, getRatioSize } from './src/utils/canvas.js'
 import { getCanvasCoordinate } from './src/utils/coordinate.js'
-import { handleEnemyInterval, handleShowEnemies } from './src/animations/enemy.js'
+import { handleEnemySpeedMultiplier, handleEnemyInterval, handleShowEnemies } from './src/animations/enemy.js'
 import { handleShowCoins } from './src/animations/coin.js'
 import { handleShowPowerUps } from './src/animations/powerUps.js'
 import { handleShowPoisons } from './src/animations/poison.js'
@@ -145,10 +145,15 @@ window.addEventListener('load', () => {
     handleStatus(ctx)
     handleEnemyInterval(game)
 
-    console.log(game)
-
     if (!game.isGameOver) {
       keypad.draw()
+    }
+
+    
+    // Debug Game
+    const countTime = Math.round(timestamp % 1000)
+    if(countTime < 10) {
+      console.log(game)
     }
 
     game.update()

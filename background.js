@@ -31,8 +31,6 @@ export class Background {
       }
     } 
 
-    // console.log(game.isBossAppear)
-
     this.x -= this.speed
     if (this.x < 0 - this.width) {
       this.x = 0

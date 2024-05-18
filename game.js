@@ -1,4 +1,4 @@
-import { ENEMY_INTERVAL } from "./src/constants/enemy.js"
+import { ENEMY_INTERVAL, ENEMY_SPEED_MULTIPLIER } from "./src/constants/enemy.js"
 
 export class Game {
   constructor(canvasContext) {
@@ -10,6 +10,7 @@ export class Game {
     this.isGameOver = false
     this.isBossAppear = false
     this.enemyInterval = ENEMY_INTERVAL
+    this.enemySpeedMultiplier = ENEMY_SPEED_MULTIPLIER
     this.lastTime = 0
     this.level = 1
 
