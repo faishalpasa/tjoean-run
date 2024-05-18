@@ -145,6 +145,8 @@ window.addEventListener('load', () => {
     handleStatus(ctx)
     handleEnemyInterval(game)
 
+    console.log(game)
+
     if (!game.isGameOver) {
       keypad.draw()
     }
@@ -241,7 +243,8 @@ window.addEventListener('load', () => {
     powerUps = []
     poisons = []
     game.restart()
-    startGame(0)
+    player.restart()
+    // startGame(0)
   }
 
   const handleRequestFullScreen = () => {

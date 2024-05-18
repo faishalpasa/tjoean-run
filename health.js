@@ -39,8 +39,6 @@ export class Health {
     const currentHealth = this.gameContext.health
     const extraHealth = currentHealth - totalHealth
 
-    console.log({totalHealth, currentHealth, extraHealth})
-
     for (let i = 0; i < totalHealth; i++) {
       const imageHeart = i < currentHealth ? this.heartImageShine : this.heartImageEmpty
       const sx = i < currentHealth ? this.frameX * this.sWidth : 0
