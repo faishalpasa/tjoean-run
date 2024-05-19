@@ -160,17 +160,23 @@ window.addEventListener('load', () => {
     game.saveScore()
 
     if (game.isGameOver) {
+      const boxImage = new Image()
+      boxImage.src = './assets/gui/box.png'
+      const gameOverBoxWidth = isPotrait() ? WIDTH * 0.5 : HEIGHT * 0.5
+      const gameOverBoxHeight = gameOverBoxWidth
+      const gameOverBoxX = (WIDTH - gameOverBoxWidth) * 0.5
+      const gameOverBoxY = ((HEIGHT - gameOverBoxHeight) * 0.5) + startMenuButtonHeight
+      ctx.drawImage(boxImage, gameOverBoxX, gameOverBoxY, gameOverBoxWidth, gameOverBoxHeight)
+
       const buttonImage = new Image()
-      buttonImage.src = './assets/gui/button-large-round.png'
+      buttonImage.src = './assets/gui/restart-button.png'
       ctx.drawImage(buttonImage, startMenuButtonX, startMenuButtonY, startMenuButtonWidth, startMenuButtonHeight)
       ctx.save()
       ctx.textAlign = 'center'
       ctx.font = getFont(8)
       ctx.fillStyle = '#001E5E'
-      ctx.fillText(`Game Over`, WIDTH / 2, HEIGHT / 2)
-      ctx.fillText(`Score: ${game.score}`, WIDTH / 2, HEIGHT / 2 + getRatioSize(20))
-      ctx.font = getFont(12)
-      ctx.fillText(`Main Lagi`, WIDTH * 0.5, startMenuButtonY + getRatioSize(32))
+      ctx.fillText(`Game Over`, WIDTH * 0.5, HEIGHT * 0.5)
+      ctx.fillText(`Score: ${game.score}`, WIDTH * 0.5, HEIGHT * 0.5 + getRatioSize(20))
       ctx.restore()
 
       game.isBossAppear = false
@@ -183,13 +189,13 @@ window.addEventListener('load', () => {
   // Start Menu
   const startMenuBoxWidth = isPotrait() ? WIDTH * 0.8 : HEIGHT * 0.8
   const startMenuBoxHeight = startMenuBoxWidth
-  const startMenuBoxX = (WIDTH - startMenuBoxWidth) / 2
-  const startMenuBoxY = (HEIGHT - startMenuBoxHeight) / 2
+  const startMenuBoxX = (WIDTH - startMenuBoxWidth) * 0.5
+  const startMenuBoxY = (HEIGHT - startMenuBoxHeight) * 0.5
 
   const startMenuButtonWidth = startMenuBoxWidth * 0.5
   const startMenuButtonHeight = startMenuButtonWidth * 0.33
   const startMenuButtonX = (WIDTH - startMenuButtonWidth) * 0.5
-  const startMenuButtonY = (HEIGHT - startMenuBoxHeight) / 2 + startMenuBoxHeight - startMenuButtonHeight - getRatioSize(16)
+  const startMenuButtonY = (HEIGHT - startMenuBoxHeight) * 0.5 + startMenuBoxHeight - startMenuButtonHeight - getRatioSize(16)
 
   let startMenuAnimation
 
@@ -219,13 +225,13 @@ window.addEventListener('load', () => {
   // Potrait Blocker
   const potraitBlockerBoxWidth = isPotrait() ? WIDTH * 0.8 : HEIGHT * 0.8
   const potraitBlockerBoxHeight = potraitBlockerBoxWidth
-  const potraitBlockerBoxX = (WIDTH - potraitBlockerBoxWidth) / 2
-  const potraitBlockerBoxY = (HEIGHT - potraitBlockerBoxHeight) / 2
+  const potraitBlockerBoxX = (WIDTH - potraitBlockerBoxWidth) * 0.5
+  const potraitBlockerBoxY = (HEIGHT - potraitBlockerBoxHeight) * 0.5
 
   const potraitBlockerButtonWidth = potraitBlockerBoxWidth * 0.5
   const potraitBlockerButtonHeight = potraitBlockerButtonWidth * 0.33
   const potraitBlockerButtonX = (WIDTH - startMenuButtonWidth) * 0.5
-  const potraitBlockerButtonY = (HEIGHT - startMenuBoxHeight) / 2 + startMenuBoxHeight - potraitBlockerButtonHeight - getRatioSize(16)
+  const potraitBlockerButtonY = (HEIGHT - startMenuBoxHeight) * 0.5 + startMenuBoxHeight - potraitBlockerButtonHeight - getRatioSize(16)
 
   let potraitBlockerAnimation
 
