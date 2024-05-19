@@ -162,7 +162,7 @@ window.addEventListener('load', () => {
     if (game.isGameOver) {
       const buttonImage = new Image()
       buttonImage.src = './assets/gui/button-large-round.png'
-      ctx.drawImage(buttonImage, buttonX, buttonY, buttonWidth, buttonHeight)
+      ctx.drawImage(buttonImage, startMenuButtonX, startMenuButtonY, startMenuButtonWidth, startMenuButtonHeight)
       ctx.save()
       ctx.textAlign = 'center'
       ctx.font = getFont(8)
@@ -170,7 +170,7 @@ window.addEventListener('load', () => {
       ctx.fillText(`Game Over`, WIDTH / 2, HEIGHT / 2)
       ctx.fillText(`Score: ${game.score}`, WIDTH / 2, HEIGHT / 2 + getRatioSize(20))
       ctx.font = getFont(12)
-      ctx.fillText(`Main Lagi`, WIDTH * 0.5, buttonY + getRatioSize(32))
+      ctx.fillText(`Main Lagi`, WIDTH * 0.5, startMenuButtonY + getRatioSize(32))
       ctx.restore()
 
       game.isBossAppear = false
@@ -181,20 +181,19 @@ window.addEventListener('load', () => {
   }
 
   // Start Menu
-  const boxWidth = isPotrait() ? WIDTH * 0.8 : HEIGHT * 0.8
-  const boxHeight = boxWidth
-  const boxX = (WIDTH - boxWidth) / 2
-  const boxY = (HEIGHT - boxHeight) / 2
+  const startMenuBoxWidth = isPotrait() ? WIDTH * 0.8 : HEIGHT * 0.8
+  const startMenuBoxHeight = startMenuBoxWidth
+  const startMenuBoxX = (WIDTH - startMenuBoxWidth) / 2
+  const startMenuBoxY = (HEIGHT - startMenuBoxHeight) / 2
 
-  const buttonWidth = boxWidth * 0.5
-  const buttonHeight = buttonWidth * 0.33
-  const buttonX = (WIDTH - buttonWidth) * 0.5
-  const buttonY = (HEIGHT - boxHeight) / 2 + boxHeight - buttonHeight - getRatioSize(16)
+  const startMenuButtonWidth = startMenuBoxWidth * 0.5
+  const startMenuButtonHeight = startMenuButtonWidth * 0.33
+  const startMenuButtonX = (WIDTH - startMenuButtonWidth) * 0.5
+  const startMenuButtonY = (HEIGHT - startMenuBoxHeight) / 2 + startMenuBoxHeight - startMenuButtonHeight - getRatioSize(16)
 
   let startMenuAnimation
 
   const startMenu = (timestamp) => {
-    const deltaTime = timestamp - game.lastTime
     game.lastTime = timestamp
 
     if (!game.isPlaying) {
@@ -207,36 +206,39 @@ window.addEventListener('load', () => {
     })
 
     const boxImage = new Image()
-    boxImage.src = './assets/gui/box.png'
-    ctx.drawImage(boxImage, boxX, boxY, boxWidth, boxHeight)
+    boxImage.src = './assets/gui/start-menu.png'
+    ctx.drawImage(boxImage, startMenuBoxX, startMenuBoxY, startMenuBoxWidth, startMenuBoxHeight)
 
     const buttonImage = new Image()
-    buttonImage.src = './assets/gui/button-large-round.png'
-    ctx.drawImage(buttonImage, buttonX, buttonY, buttonWidth, buttonHeight)
-
-    ctx.save()
-
-    ctx.fillStyle = '#006E5A'
-    ctx.textAlign = 'center'
-    ctx.font = getFont(12)
-    ctx.fillText(`Tjoean Run`, WIDTH * 0.5, boxY + getRatioSize(32))
-    ctx.font = getFont(6)
-    ctx.fillText(`Lari dan hindari para musuh`, WIDTH * 0.5, boxY + getRatioSize(64))
-    ctx.fillText(`lalu kumpulkan koin untuk menambah`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 1))
-    ctx.fillText(`poin agar lebih tjoean`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 2))
-    ctx.fillText(``, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 3))
-    ctx.fillText(`Dash untuk lari`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 4))
-    ctx.fillText(`Jump untuk melompat`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 5))
-    ctx.fillText(`Tap Jump 2x untuk melompat lebih tinggi 🎤🎼`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 6))
-    ctx.fillText(``, WIDTH * 0.5, boxY + 64 + 16 * 7)
-    ctx.fillText(`Gunakan mode landscape biar lebih enak`, WIDTH * 0.5, boxY + getRatioSize(64 + 16 * 8))
-
-    ctx.font = getFont(12)
-    ctx.fillText(`Gas Main`, WIDTH * 0.5, buttonY + getRatioSize(32))
-
-    ctx.restore()
+    buttonImage.src = './assets/gui/start-button.png'
+    ctx.drawImage(buttonImage, startMenuButtonX, startMenuButtonY, startMenuButtonWidth, startMenuButtonHeight)
 
     startMenuAnimation = requestAnimationFrame(startMenu)
+  }
+
+  // Potrait Blocker
+  const potraitBlockerBoxWidth = isPotrait() ? WIDTH * 0.8 : HEIGHT * 0.8
+  const potraitBlockerBoxHeight = potraitBlockerBoxWidth
+  const potraitBlockerBoxX = (WIDTH - potraitBlockerBoxWidth) / 2
+  const potraitBlockerBoxY = (HEIGHT - potraitBlockerBoxHeight) / 2
+
+  const potraitBlockerButtonWidth = potraitBlockerBoxWidth * 0.5
+  const potraitBlockerButtonHeight = potraitBlockerButtonWidth * 0.33
+  const potraitBlockerButtonX = (WIDTH - startMenuButtonWidth) * 0.5
+  const potraitBlockerButtonY = (HEIGHT - startMenuBoxHeight) / 2 + startMenuBoxHeight - potraitBlockerButtonHeight - getRatioSize(16)
+
+  let potraitBlockerAnimation
+
+  const potraitBlocker = () => {
+    const boxImage = new Image()
+    boxImage.src = './assets/gui/potrait-blocker.png'
+    ctx.drawImage(boxImage, potraitBlockerBoxX, potraitBlockerBoxY, potraitBlockerBoxWidth, potraitBlockerBoxHeight)
+
+    const buttonImage = new Image()
+    buttonImage.src = './assets/gui/continue-button.png'
+    ctx.drawImage(buttonImage, potraitBlockerButtonX, potraitBlockerButtonY, potraitBlockerButtonWidth, potraitBlockerButtonHeight)
+
+    potraitBlockerAnimation = requestAnimationFrame(potraitBlocker)
   }
 
   const handleRestartGame = () => {
@@ -267,19 +269,30 @@ window.addEventListener('load', () => {
   canvas.addEventListener('click', (e) => {
     const rect = canvas.getBoundingClientRect()
     const { x, y } = getCanvasCoordinate(e.view.innerWidth, e.view.innerHeight, e.clientX, e.clientY, rect.left, rect.top)
-  
-    if (isInsideRect({x, y}, { x: buttonX, y: buttonY, width: buttonWidth, height: buttonHeight })) {
-      handleRequestFullScreen()
-      cancelAnimationFrame(startMenuAnimation)
-      
-      if (!game.isPlaying){
-        game.isPlaying = true
-        startGame(0)
-      }
 
-      if (game.isGameOver) {
-        handleRestartGame()
-      } 
+    if (!game.isPotraitBlokerShow) {
+      if (isInsideRect({x, y}, { x: startMenuButtonX, y: startMenuButtonY, width: startMenuButtonWidth, height: startMenuButtonHeight })) {
+        console.log(game)
+        handleRequestFullScreen()
+        cancelAnimationFrame(startMenuAnimation)
+        
+        if (!game.isPlaying){
+          game.isPlaying = true
+          startGame(0)
+        }
+
+        if (game.isGameOver) {
+          handleRestartGame()
+        } 
+      }
+    }
+
+    if (game.isPotraitBlokerShow) {
+      if (isInsideRect({x, y}, { x: potraitBlockerButtonX, y: potraitBlockerButtonY, width: potraitBlockerButtonWidth, height: potraitBlockerButtonHeight })) {
+        cancelAnimationFrame(potraitBlockerAnimation)
+        startMenu(0)
+        game.isPotraitBlokerShow = false
+      }
     }
   });
 
@@ -309,5 +322,10 @@ window.addEventListener('load', () => {
     }
   })
   
-  startMenu(0)
+  if (isPotrait()) {
+    game.isPotraitBlokerShow = true
+    potraitBlocker()
+  } else {
+    startMenu(0)
+  }
 })

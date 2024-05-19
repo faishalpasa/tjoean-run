@@ -36,17 +36,17 @@ export class Tile {
   }
 
   update () { 
-    if (this.gameContext.level === 2) {
-      this.tileName = 'grass-tilemap-2'
-      this.imgSrc = `./assets/platform/${this.tileName}.png`
-      this.image = new Image()
-      this.image.src = this.imgSrc
-    } else if (this.gameContext.level >= 3) {
-      this.tileName = 'grass-tilemap-3'
-      this.imgSrc = `./assets/platform/${this.tileName}.png`
-      this.image = new Image()
-      this.image.src = this.imgSrc
-    }
+    // if (this.gameContext.level === 2) {
+    //   this.tileName = 'grass-tilemap-2'
+    //   this.imgSrc = `./assets/platform/${this.tileName}.png`
+    //   this.image = new Image()
+    //   this.image.src = this.imgSrc
+    // } else if (this.gameContext.level >= 3) {
+    //   this.tileName = 'grass-tilemap-3'
+    //   this.imgSrc = `./assets/platform/${this.tileName}.png`
+    //   this.image = new Image()
+    //   this.image.src = this.imgSrc
+    // }
 
 
     this.x -= this.speed

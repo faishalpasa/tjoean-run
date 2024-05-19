@@ -6,6 +6,7 @@ export class Game {
     this.score = 0
     this.health = 5
     this.totalHealth = 5
+    this.isPotraitBlokerShow = false
     this.isPlaying = false
     this.isGameOver = false
     this.isBossAppear = false

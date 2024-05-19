@@ -9,41 +9,27 @@ export class Keypad {
 
     this.keypadRightX = WIDTH - this.width
     this.keypadRightY = HEIGHT - this.height
+    this.imageRight = new Image()
+    this.imageRight.src = './assets/gui/jump-button.png'
 
     this.keypadLeftX = 0
     this.keypadLeftY = HEIGHT - this.height
-
-    this.imgSrc = `./assets/gui/button-circle.png`
-    this.image = new Image()
-    this.image.src = this.imgSrc
+    this.imageLeft = new Image()
+    this.imageLeft.src = './assets/gui/dash-button.png'
   }
 
   draw() {
     // Left Keypad
     this.context.save()
     this.context.globalAlpha = 0.8
-    this.context.drawImage(this.image, 0, HEIGHT - this.height * 0.8, this.width * 0.8, this.height * 0.8)
-
-    // this.context.strokeRect(this.keypadRightX, this.keypadRightY, this.width, this.height)
-    // this.context.beginPath()
-    // this.context.arc(this.keypadRightX + this.height / 2, this.keypadRightY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
-    // this.context.stroke()
-    this.context.font = getFont(8)
-    this.context.fillText(`Dash`, getRatioSize(23), HEIGHT - this.height * 0.4)
+    this.context.drawImage(this.imageLeft, 0, HEIGHT - this.height * 0.8, this.width * 0.8, this.height * 0.8)
     this.context.restore()
 
 
     // Right Keypad
     this.context.save()
     this.context.globalAlpha = 0.8
-    this.context.drawImage(this.image, WIDTH - this.width * 0.8, HEIGHT - this.height * 0.8, this.width * 0.8, this.height * 0.8)
-
-    // this.context.strokeRect(this.keypadLeftX, this.keypadLeftY, this.width, this.height)
-    // this.context.beginPath()
-    // this.context.arc(this.keypadLeftX + this.height / 2, this.keypadLeftY + this.width / 2, this.width / 2, 0, 2 * Math.PI)
-    // this.context.stroke()
-    this.context.font = getFont(8)
-    this.context.fillText(`Jump`, WIDTH - this.height * 0.4 - getRatioSize(16), HEIGHT - this.height * 0.4)
+    this.context.drawImage(this.imageRight, WIDTH - this.width * 0.8, HEIGHT - this.height * 0.8, this.width * 0.8, this.height * 0.8)
     this.context.restore()
   }
 
