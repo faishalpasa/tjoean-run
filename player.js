@@ -236,7 +236,7 @@ export class Player {
         coin.isOutOufScreen = true
         this.isShowAdditionalScore = true
         this.additionalScores = coin.additionalScore
-
+        this.additionalScoreTimeStamp = 0
         game.score += coin.additionalScore * this.pointMultipler
       }
     })
@@ -262,7 +262,8 @@ export class Player {
         powerUp.isOutOufScreen = true
         this.isShowAdditionalScore = true
         this.additionalScores = powerUp.additionalScore
-        game.score += powerUp.additionalScore
+        this.additionalScoreTimeStamp = 0
+        game.score += powerUp.additionalScore * this.pointMultipler
         
         if (powerUp.type === 'health') {
           game.health += 1
@@ -270,6 +271,11 @@ export class Player {
 
         if (powerUp.type === 'companion') {
           game.companion = powerUp
+        }
+
+        if (powerUp.type === 'ability') {
+          game.ability = powerUp
+          game.abilityTimer = 0
         }
       }
     })
@@ -295,7 +301,8 @@ export class Player {
         poison.isOutOufScreen = true
         this.isShowAdditionalScore = true
         this.additionalScores = poison.additionalScore
-        game.score += poison.additionalScore
+        this.additionalScoreTimeStamp = 0
+        game.score += poison.additionalScore * this.pointMultipler
       }
     })
 

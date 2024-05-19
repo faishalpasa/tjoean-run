@@ -13,7 +13,9 @@ const coinPosition = Y_POSITIONS
 
 export const handleShowCoins = ({ canvasContext, deltaTime, coins }) => {
   if (coinTimer > coinInterval + coinRandomInterval) {
-    const randomCoin = coinList[Math.floor(Math.random() * coinList.length)]
+    const randomDecimal = Math.random()
+    const randomCoin = coinList.find((coin) => randomDecimal < coin.chanceMax && randomDecimal >= coin.chanceMin)
+    // const randomCoin = coinList[Math.floor(Math.random() * coinList.length)]
     const randomCoinPosition = coinPosition[Math.floor(Math.random() * coinPosition.length)]
     const yPosition = randomCoin.position ? getDYMultiplier(randomCoin.position) : randomCoinPosition.dyMultipler
     const randomCoinSrc = `./assets/coins/${randomCoin.name}.png`

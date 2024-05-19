@@ -9,14 +9,22 @@ export class Game {
     this.isPotraitBlokerShow = false
     this.isPlaying = false
     this.isGameOver = false
-    this.isBossAppear = false
     this.enemyInterval = ENEMY_INTERVAL
     this.enemySpeedMultiplier = ENEMY_SPEED_MULTIPLIER
     this.lastTime = 0
     this.level = 1
 
+    // boss
+    this.isBossAppear = false
+    this.bossAppearTimer = 0
+    this.bossDisappearTimer = 0
+
     // companion
     this.companion = null
+
+    // ability
+    this.ability = null
+    this.abilityTimer = 0
   }
 
   draw(context) {
@@ -29,10 +37,12 @@ export class Game {
     this.score = 0
     this.health = 5
     this.isGameOver = false
-    this.isBossAppear = false
     this.lastTime = 0
     this.level = 1
     this.companionName = ''
+    this.isBossAppear = false
+    this.bossAppearTimer = 0
+    this.bossDisappearTimer = 0
   }
 
   saveScore() {

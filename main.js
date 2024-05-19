@@ -14,7 +14,7 @@ import { isPotrait, isInsideRect, getFont, getRatioSize } from './src/utils/canv
 import { getCanvasCoordinate } from './src/utils/coordinate.js'
 import { handleEnemySpeedMultiplier, handleEnemyInterval, handleShowEnemies } from './src/animations/enemy.js'
 import { handleShowCoins } from './src/animations/coin.js'
-import { handleShowPowerUps } from './src/animations/powerUps.js'
+import { handleShowPowerUps, handlePowerUpAbilityDuration } from './src/animations/powerUps.js'
 import { handleShowPoisons } from './src/animations/poison.js'
 
 window.addEventListener('load', () => {
@@ -65,20 +65,18 @@ window.addEventListener('load', () => {
     game.level = game.level + 1
   }
 
-  let bossAppearTimer = 0
-  let bossDisapearTimer = 0
   const handleBossApear = (deltaTime) => {
-    if (bossDisapearTimer > BOSS_DISAPPEAR_TIMER) {
+    if (game.bossDisappearTimer > BOSS_DISAPPEAR_TIMER) {
       game.isBossAppear = true
-      bossAppearTimer += deltaTime
-      if (bossAppearTimer > BOSS_APPEAR_TIMER) {
+      game.bossAppearTimer += deltaTime
+      if (game.bossAppearTimer > BOSS_APPEAR_TIMER) {
         game.isBossAppear = false
-        bossAppearTimer = 0
-        bossDisapearTimer = 0
+        game.bossAppearTimer = 0
+        game.bossDisappearTimer = 0
         handleLevelUp()
       }
     } else {
-      bossDisapearTimer += deltaTime
+      game.bossDisappearTimer += deltaTime
     }
   }
 
@@ -144,6 +142,8 @@ window.addEventListener('load', () => {
 
     handleStatus(ctx)
     handleEnemyInterval(game)
+    handleEnemySpeedMultiplier(game)
+    handlePowerUpAbilityDuration({ game, deltaTime })
 
     if (!game.isGameOver) {
       keypad.draw()
@@ -152,7 +152,7 @@ window.addEventListener('load', () => {
     
     // Debug Game
     const countTime = Math.round(timestamp % 1000)
-    if(countTime < 10) {
+    if(countTime < 20) {
       console.log(game)
     }
 
@@ -180,8 +180,8 @@ window.addEventListener('load', () => {
       ctx.restore()
 
       game.isBossAppear = false
-      bossAppearTimer = 0
-      bossDisapearTimer = 0
+      game.bossAppearTimer = 0
+      game.bossDisappearTimer = 0
     }
     startGameAnimation = requestAnimationFrame(startGame)
   }
@@ -255,21 +255,22 @@ window.addEventListener('load', () => {
     enemies = []
     powerUps = []
     poisons = []
+    game.lastTime = 0
     game.restart()
     player.restart()
     // startGame(0)
   }
 
   const handleRequestFullScreen = () => {
-    if (canvas.requestFullscreen) {
-      canvas.requestFullscreen()
-    } else if (canvas.webkitRequestFullscreen) {
-      canvas.webkitRequestFullscreen()
-    } else if (canvas.mozRequestFullScreen) {
-      canvas.mozRequestFullScreen()
-    } else if (canvas.msRequestFullscreen) {
-      canvas.msRequestFullscreen()
-    }
+    // if (canvas.requestFullscreen) {
+    //   canvas.requestFullscreen()
+    // } else if (canvas.webkitRequestFullscreen) {
+    //   canvas.webkitRequestFullscreen()
+    // } else if (canvas.mozRequestFullScreen) {
+    //   canvas.mozRequestFullScreen()
+    // } else if (canvas.msRequestFullscreen) {
+    //   canvas.msRequestFullscreen()
+    // }
   }
 
   canvas.addEventListener('click', (e) => {
@@ -278,7 +279,6 @@ window.addEventListener('load', () => {
 
     if (!game.isPotraitBlokerShow) {
       if (isInsideRect({x, y}, { x: startMenuButtonX, y: startMenuButtonY, width: startMenuButtonWidth, height: startMenuButtonHeight })) {
-        console.log(game)
         handleRequestFullScreen()
         cancelAnimationFrame(startMenuAnimation)
         

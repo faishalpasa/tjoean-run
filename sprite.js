@@ -85,6 +85,13 @@ export class Sprite {
       this.effect.frameX = 30
       this.effect.frameY = 10
     }
+    if (this.type === 'ability') {
+      this.effectImage.src = './assets/effects/fire.png'
+      this.effect.initialFrameX = 14
+      this.effect.maxFrameX = 17
+      this.effect.frameX = 14
+      this.effect.frameY = 5
+    }
 
   }
 

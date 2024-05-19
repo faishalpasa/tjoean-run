@@ -1,8 +1,8 @@
-export const COIN_INTERVAL = 2000
+export const COIN_INTERVAL = 1000
 export const COINS = [
   {
-    name: 'coin1', 
-    maxFrame: 9, 
+    name: 'coin-silver', 
+    maxFrame: 5, 
     additionalScore: 100, 
     type: 'coin',
     sx: 0,
@@ -11,11 +11,13 @@ export const COINS = [
     sHeight: 16,
     dWidth: 32,
     dHeight: 32,
+    chanceMax: 1,
+    chanceMin: 0.5
   },
   { 
-    name: 'coin2',
-    maxFrame: 9, 
-    additionalScore: 50, 
+    name: 'coin-gold',
+    maxFrame: 5, 
+    additionalScore: 200, 
     type: 'coin',
     sx: 0,
     sy: 0,
@@ -23,11 +25,13 @@ export const COINS = [
     sHeight: 16,
     dWidth: 32,
     dHeight: 32,
+    chanceMax: 0.5,
+    chanceMin: 0.2
   },
   { 
-    name: 'diamond', 
-    maxFrame: 4, 
-    additionalScore: 300, 
+    name: 'money-green',
+    maxFrame: 2, 
+    additionalScore: 500, 
     type: 'coin',
     sx: 0,
     sy: 0,
@@ -35,5 +39,35 @@ export const COINS = [
     sHeight: 16,
     dWidth: 32,
     dHeight: 32,
-  }
+    chanceMax: 0.2,
+    chanceMin: 0.1
+  },
+  { 
+    name: 'money-red',
+    maxFrame: 2, 
+    additionalScore: 1000, 
+    type: 'coin',
+    sx: 0,
+    sy: 0,
+    sWidth: 16,
+    sHeight: 16,
+    dWidth: 32,
+    dHeight: 32,
+    chanceMax: 0.1,
+    chanceMin: 0.05
+  },
+  { 
+    name: 'diamond',
+    maxFrame: 5, 
+    additionalScore: 5000, 
+    type: 'coin',
+    sx: 0,
+    sy: 0,
+    sWidth: 16,
+    sHeight: 16,
+    dWidth: 32,
+    dHeight: 32,
+    chanceMax: 0.05,
+    chanceMin: 0
+  },
 ]
