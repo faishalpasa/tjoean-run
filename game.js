@@ -3,6 +3,8 @@ import { ENEMY_INTERVAL, ENEMY_SPEED_MULTIPLIER } from "./src/constants/enemy.js
 export class Game {
   constructor(canvasContext) {
     this.canvasContext = canvasContext
+
+    // game state
     this.score = 0
     this.health = 5
     this.totalHealth = 5
@@ -34,15 +36,27 @@ export class Game {
   update() {}
 
   restart () {
+    // game state
     this.score = 0
     this.health = 5
+    this.totalHealth = 5
     this.isGameOver = false
+    this.enemyInterval = ENEMY_INTERVAL
+    this.enemySpeedMultiplier = ENEMY_SPEED_MULTIPLIER
     this.lastTime = 0
     this.level = 1
-    this.companionName = ''
+
+    // boss
     this.isBossAppear = false
     this.bossAppearTimer = 0
     this.bossDisappearTimer = 0
+
+    // companion
+    this.companion = null
+
+    // ability
+    this.ability = null
+    this.abilityTimer = 0
   }
 
   saveScore() {

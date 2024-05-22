@@ -11,11 +11,18 @@ let coinRandomInterval = 0
 const coinList = COINS
 const coinPosition = Y_POSITIONS
 
-export const handleShowCoins = ({ canvasContext, deltaTime, coins }) => {
+export const handleShowCoins = ({ canvasContext, deltaTime, coins, game }) => {
+  if (game.ability?.name === 'power-up-r') {
+    console.log('ada')
+    coinInterval = COIN_INTERVAL * 0.1
+    console.log(coinInterval)
+  } else {
+    coinInterval = COIN_INTERVAL
+  }
+
   if (coinTimer > coinInterval + coinRandomInterval) {
     const randomDecimal = Math.random()
     const randomCoin = coinList.find((coin) => randomDecimal < coin.chanceMax && randomDecimal >= coin.chanceMin)
-    // const randomCoin = coinList[Math.floor(Math.random() * coinList.length)]
     const randomCoinPosition = coinPosition[Math.floor(Math.random() * coinPosition.length)]
     const yPosition = randomCoin.position ? getDYMultiplier(randomCoin.position) : randomCoinPosition.dyMultipler
     const randomCoinSrc = `./assets/coins/${randomCoin.name}.png`
@@ -38,7 +45,7 @@ export const handleShowCoins = ({ canvasContext, deltaTime, coins }) => {
         speed: 2
       }
     ))
-    coinRandomInterval = Math.random() * (COIN_INTERVAL / 2) + COIN_INTERVAL
+    coinRandomInterval = Math.random() * (coinInterval / 2) + coinInterval
     coinTimer = 0
   } else {
     coinTimer += deltaTime

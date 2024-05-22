@@ -56,7 +56,6 @@ export const handleShowPowerUps = ({ canvasContext, deltaTime, powerUps }) => {
   }
 
   // Companion Power Up
-  console.log(powerUps)
   if (powerUpCompanionTimer > powerUpCompanionInterval) {
     const randomPowerUp = POWER_UP_COMPANIONS[Math.floor(Math.random() * POWER_UP_COMPANIONS.length)]
     const randomPowerUpPosition = Y_POSITIONS[Math.floor(Math.random() * Y_POSITIONS.length)]
@@ -140,5 +139,21 @@ export const handlePowerUpAbilityDuration = ({ game, deltaTime }) => {
     }
   } else {
     game.abilityTimer += deltaTime
+  }
+}
+
+export const handleShowAbility = ({ canvasContext, game }) => {
+  if (game.ability) {
+    const abilityImage = game.ability.image
+    const sx = game.ability.sx
+    const sy = game.ability.sy
+    const sWidth = game.ability.sWidth
+    const sHeight = game.ability.sHeight
+    const dx = CANVAS.WIDTH - getRatioSize(40)
+    const dy = getRatioSize(40)
+    const dWidth = getRatioSize(32)
+    const dHeight = getRatioSize(32)
+    
+    canvasContext.drawImage(abilityImage, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
   }
 }

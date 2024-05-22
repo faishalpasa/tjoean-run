@@ -64,9 +64,11 @@ export class Player {
     this.effectWidth = 16
     this.effectHeight = 16
     
-    this.initialPlayerY = this.gameHeight - getRatioSize(this.srcHeight) + getRatioSize(8) - getRatioSize(TILE_HEIGHT) - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER)
-    this.playerWidth = getRatioSize(this.srcWidth * 2)
-    this.playerHeight = getRatioSize(this.srcHeight * 2)
+    // this.playerWidth = getRatioSize(this.srcWidth * 2)
+    // this.playerHeight = getRatioSize(this.srcHeight * 2)
+    this.playerWidth = getRatioSize(48)
+    this.playerHeight = getRatioSize(48)
+    this.initialPlayerY = this.gameHeight - getRatioSize(this.playerHeight) - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER)
     this.x = 0
     this.y = this.initialPlayerY
     this.vy = 0
@@ -97,11 +99,25 @@ export class Player {
     this.additionalScoreTimeStamp = 0
     this.additionalScoreShowDuration = 500
 
+    // PowerUp
+    this.pointMultipler = 1
+
     // Companion
     this.companion = null
 
-    // PowerUp
-    this.pointMultipler = 1
+    // Ability
+    this.ability = {
+      image: new Image(),
+      sx: 0,
+      sy: 0,
+      sWidth: 0,
+      sHeight: 0,
+      dx: 0,
+      dy: this.initialPlayerY,
+      dWidth: 0,
+      dHeight: 0,
+      maxFrame: 0,
+    }
   }
 
   draw() {
@@ -112,8 +128,8 @@ export class Player {
     // this.context.arc(this.x + this.playerHeight / 2, this.y + this.playerWidth / 2, this.playerWidth / 2, 0, 2 * Math.PI)
     // this.context.stroke()
     // end debugging
-    
     this.context.drawImage(this.playerImage, (this.startFrame + this.frameX) * this.srcWidth, this.frameY * this.srcHeight, this.srcWidth, this.srcHeight, this.x, this.y, this.playerWidth, this.playerHeight)
+
 
     // Run Effect
     this.context.drawImage(this.effect, (this.effectStartFrame + this.effectFrameX) * 16, 0, 16, 16, this.x - this.srcWidth / 2, this.y + this.playerHeight / 2, 16, 16)
@@ -130,6 +146,29 @@ export class Player {
 
         this.context.drawImage(this.companion.image, this.companion.sx * this.companion.sWidth, this.companion.sy * this.companion.sHeight + frameYDiff, this.companion.sWidth, this.companion.sHeight, this.x - this.playerWidth * 0.8, this.companion.dy, this.companion.dWidth, this.companion.dHeight)
       }
+    }
+
+    // Ability
+    if (this.gameContext.ability) {
+      const frameYDiff = getRatioSize(0)
+      this.ability.image.src = `./assets/abilities/ability-power-up-r.png`
+      this.ability.sWidth = 32
+      this.ability.sHeight = 32
+      this.ability.dWidth = getRatioSize(64)
+      this.ability.dHeight = getRatioSize(64)
+      this.ability.dx = this.ability.dWidth * 0.5
+      this.ability.dy = this.ability.dHeight
+      this.ability.maxFrame = 7
+
+      // start debugging
+      this.context.strokeStyle = 'red'
+      this.context.strokeRect(this.ability.dx, this.ability.dy, this.ability.dWidth, this.ability.dHeight)
+      this.context.beginPath()
+      this.context.arc(this.ability.dx + this.ability.dHeight / 2, this.ability.dy + this.ability.dWidth / 2, this.ability.dWidth / 2, 0, 2 * Math.PI)
+      this.context.stroke()
+      // end debugging
+
+      this.context.drawImage(this.ability.image, this.ability.sx * this.ability.sWidth, this.ability.sy * this.ability.sHeight + frameYDiff, this.ability.sWidth, this.ability.sHeight, this.ability.dx, this.ability.dy, this.ability.dWidth, this.ability.dHeight)
     }
   }
 
@@ -208,6 +247,15 @@ export class Player {
         }
       }
 
+      // ability
+      if (this.ability) {
+        if (this.ability.sx >= this.ability.maxFrame) {
+          this.ability.sx = 0
+        } else {
+          this.ability.sx += 1
+        }
+      }
+
       this.frameTimer = 0
     } else {
       this.frameTimer += deltaTime
@@ -219,20 +267,51 @@ export class Player {
       const playerCoordinateY = this.y + this.playerHeight / 2
       const coinCoordinateX = coin.dx + coin.dWidth / 2
       const coinCoordinateY = coin.dy + coin.dHeight / 2
-      const dx = coinCoordinateX - playerCoordinateX
-      const dy = coinCoordinateY - playerCoordinateY
-      const distance = Math.sqrt(dx * dx + dy * dy)
+      const distanceCoinPlayerDx = coinCoordinateX - playerCoordinateX
+      const distanceCoinPlayerDy = coinCoordinateY - playerCoordinateY
+      const distanceCoinWithPlayer = Math.sqrt(distanceCoinPlayerDx * distanceCoinPlayerDx + distanceCoinPlayerDy * distanceCoinPlayerDy)
 
-      // start debugging
+      // Ability R
+      if (game.ability) {
+        coin.speed = 10
+        if (coin.dy > this.ability.dy + coin.dHeight / 2) {
+          coin.dy -= 5
+        }
+        
+        const abilityCoordinateX = this.ability.dx + this.ability.dWidth / 2
+        const abilityCoordinateY = this.ability.dy + this.ability.dHeight / 2
+        const distanceAbilityCoinDx = coinCoordinateX - abilityCoordinateX
+        const distanceAbilityCoinDy = coinCoordinateY - abilityCoordinateY
+        const distanceAbilityCoin = Math.sqrt(distanceAbilityCoinDx * distanceAbilityCoinDx + distanceAbilityCoinDy * distanceAbilityCoinDy)
+
+        // start debugging ability coin
+        // this.context.save()
+        // this.context.beginPath()
+        // this.context.moveTo(abilityCoordinateX, abilityCoordinateY)
+        // this.context.lineTo(coinCoordinateX, coinCoordinateY)
+        // this.context.stroke()
+        // this.context.restore()
+        // end debugging ability coin
+
+        if (distanceAbilityCoin < (this.ability.dWidth / 2) + (coin.sWidth / 2)) {
+          coin.isOutOufScreen = true
+          this.isShowAdditionalScore = true
+          this.additionalScores = coin.additionalScore
+          this.additionalScoreTimeStamp = 0
+          game.score += coin.additionalScore * this.pointMultipler
+        }
+      }
+
+      // start debugging player coin
       // this.context.save()
       // this.context.beginPath()
       // this.context.moveTo(playerCoordinateX, playerCoordinateY)
       // this.context.lineTo(coinCoordinateX, coinCoordinateY)
       // this.context.stroke()
       // this.context.restore()
-      // end debugging
+      // end debugging player coin
 
-      if (distance < (this.playerWidth / 2) + (coin.sWidth / 2)) {
+      if (distanceCoinWithPlayer < (this.playerWidth / 2) + (coin.sWidth / 2)) {
         coin.isOutOufScreen = true
         this.isShowAdditionalScore = true
         this.additionalScores = coin.additionalScore

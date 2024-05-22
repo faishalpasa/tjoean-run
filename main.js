@@ -9,12 +9,13 @@ import { Boss } from './boss.js'
 import { Keypad } from './keypad.js'
 import { DASH, JUMP } from './src/constants/action.js'
 import { WIDTH, HEIGHT } from './src/constants/canvas.js'
-import { BOSS_APPEAR_TIMER, BOSS_DISAPPEAR_TIMER, BOSS_MAX_LEVEL } from './src/constants/boss.js'
+import { ENEMY_INTERVAL, ENEMY_SPEED_MULTIPLIER } from './src/constants/enemy.js'
+import { BOSS_APPEAR_TIMER, BOSS_DISAPPEAR_TIMER } from './src/constants/boss.js'
 import { isPotrait, isInsideRect, getFont, getRatioSize } from './src/utils/canvas.js'
 import { getCanvasCoordinate } from './src/utils/coordinate.js'
 import { handleEnemySpeedMultiplier, handleEnemyInterval, handleShowEnemies } from './src/animations/enemy.js'
 import { handleShowCoins } from './src/animations/coin.js'
-import { handleShowPowerUps, handlePowerUpAbilityDuration } from './src/animations/powerUps.js'
+import { handleShowPowerUps, handlePowerUpAbilityDuration, handleShowAbility } from './src/animations/powerUps.js'
 import { handleShowPoisons } from './src/animations/poison.js'
 
 window.addEventListener('load', () => {
@@ -130,7 +131,7 @@ window.addEventListener('load', () => {
     health.draw(ctx)
     health.update(deltaTime)
     
-    coins = handleShowCoins({ canvasContext: ctx, deltaTime, coins })
+    coins = handleShowCoins({ canvasContext: ctx, game, deltaTime, coins })
     enemies = handleShowEnemies({ canvasContext: ctx, game, deltaTime, enemies })
     powerUps = handleShowPowerUps({ canvasContext: ctx, deltaTime, powerUps })
     poisons = handleShowPoisons({ canvasContext: ctx, deltaTime, poisons })
@@ -139,6 +140,7 @@ window.addEventListener('load', () => {
     boss.draw(ctx)
     boss.update(game)
     handleBossApear(deltaTime)
+    handleShowAbility({ canvasContext: ctx, deltaTime, game })
 
     handleStatus(ctx)
     handleEnemyInterval(game)
@@ -255,8 +257,23 @@ window.addEventListener('load', () => {
     enemies = []
     powerUps = []
     poisons = []
+
+    // game.restart()
+    game.score = 0
+    game.health = 5
+    game.totalHealth = 5
+    game.isGameOver = false
+    game.enemyInterval = ENEMY_INTERVAL
+    game.enemySpeedMultiplier = ENEMY_SPEED_MULTIPLIER
     game.lastTime = 0
-    game.restart()
+    game.level = 1
+    game.isBossAppear = false
+    game.bossAppearTimer = 0
+    game.bossDisappearTimer = 0
+    game.companion = null
+    game.ability = null
+    game.abilityTimer = 0
+
     player.restart()
     // startGame(0)
   }
