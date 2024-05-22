@@ -31,7 +31,7 @@ export const POWER_UP_COMPANIONS = [
   },
 ]
 
-export const POWER_UP_ABILITY_INTERVAL = 10000 // 10000
+export const POWER_UP_ABILITY_INTERVAL = 30000 // 30000
 export const POWER_UP_ABILITY_DURATION = 5000
 export const POWER_UP_ABILITIES = [
   // { 
