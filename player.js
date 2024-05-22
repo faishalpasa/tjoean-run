@@ -161,11 +161,11 @@ export class Player {
       this.ability.maxFrame = 7
 
       // start debugging
-      this.context.strokeStyle = 'red'
-      this.context.strokeRect(this.ability.dx, this.ability.dy, this.ability.dWidth, this.ability.dHeight)
-      this.context.beginPath()
-      this.context.arc(this.ability.dx + this.ability.dHeight / 2, this.ability.dy + this.ability.dWidth / 2, this.ability.dWidth / 2, 0, 2 * Math.PI)
-      this.context.stroke()
+      // this.context.strokeStyle = 'red'
+      // this.context.strokeRect(this.ability.dx, this.ability.dy, this.ability.dWidth, this.ability.dHeight)
+      // this.context.beginPath()
+      // this.context.arc(this.ability.dx + this.ability.dHeight / 2, this.ability.dy + this.ability.dWidth / 2, this.ability.dWidth / 2, 0, 2 * Math.PI)
+      // this.context.stroke()
       // end debugging
 
       this.context.drawImage(this.ability.image, this.ability.sx * this.ability.sWidth, this.ability.sy * this.ability.sHeight + frameYDiff, this.ability.sWidth, this.ability.sHeight, this.ability.dx, this.ability.dy, this.ability.dWidth, this.ability.dHeight)
