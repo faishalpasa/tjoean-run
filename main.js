@@ -279,15 +279,15 @@ window.addEventListener('load', () => {
   }
 
   const handleRequestFullScreen = () => {
-    // if (canvas.requestFullscreen) {
-    //   canvas.requestFullscreen()
-    // } else if (canvas.webkitRequestFullscreen) {
-    //   canvas.webkitRequestFullscreen()
-    // } else if (canvas.mozRequestFullScreen) {
-    //   canvas.mozRequestFullScreen()
-    // } else if (canvas.msRequestFullscreen) {
-    //   canvas.msRequestFullscreen()
-    // }
+    if (canvas.requestFullscreen) {
+      canvas.requestFullscreen()
+    } else if (canvas.webkitRequestFullscreen) {
+      canvas.webkitRequestFullscreen()
+    } else if (canvas.mozRequestFullScreen) {
+      canvas.mozRequestFullScreen()
+    } else if (canvas.msRequestFullscreen) {
+      canvas.msRequestFullscreen()
+    }
   }
 
   canvas.addEventListener('click', (e) => {
