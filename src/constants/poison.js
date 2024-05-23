@@ -3,7 +3,7 @@ export const POISONS = [
   { 
     name: 'putu-cake',
     maxFrame: 0, 
-    additionalScore: -1000, 
+    additionalScore: -5000, 
     position: 'ground',
     type: 'poison',
     sx: 0,
