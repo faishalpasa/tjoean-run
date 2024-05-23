@@ -157,7 +157,7 @@ export class Player {
       this.ability.dWidth = getRatioSize(64)
       this.ability.dHeight = getRatioSize(64)
       this.ability.dx = this.gameWidth * 0.5 - this.ability.dWidth / 2
-      this.ability.dy = this.gameHeight * 0.3
+      this.ability.dy = this.ability.dHeight * 1.5
       this.ability.maxFrame = 7
 
       // start debugging
