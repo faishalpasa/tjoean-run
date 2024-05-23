@@ -101,15 +101,14 @@ window.addEventListener('load', () => {
   }
 
   // Start Game
-  let startGameAnimation
 
   const startGame = (timestamp) => {
     const deltaTime = timestamp - game.lastTime
 
-    if (deltaTime < 1) {
-      game.restart()
-      player.restart()
-    }
+    // if (deltaTime < 1) {
+    //   game.restart()
+    //   player.restart()
+    // }
     
     game.lastTime = timestamp
 
