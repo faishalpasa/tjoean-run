@@ -156,8 +156,8 @@ export class Player {
       this.ability.sHeight = 32
       this.ability.dWidth = getRatioSize(64)
       this.ability.dHeight = getRatioSize(64)
-      this.ability.dx = this.ability.dWidth * 0.5
-      this.ability.dy = this.ability.dHeight
+      this.ability.dx = this.gameWidth * 0.5 - this.ability.dWidth / 2
+      this.ability.dy = this.gameHeight * 0.3
       this.ability.maxFrame = 7
 
       // start debugging
@@ -507,7 +507,7 @@ export class Player {
   handleAdditionalScore = () => {
     this.context.save()
     this.context.font = getFont(10)
-    this.context.fillStyle = this.pointMultipler > 1 ? '#E18608' : 'grey'
+    this.context.fillStyle = this.pointMultipler > 1 ? '#E18608' : '#000'
     if (this.isShowAdditionalScore) {
       if (this.additionalScoreTimeStamp > this.additionalScoreShowDuration) {
         this.additionalScores = 0
