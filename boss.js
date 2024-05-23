@@ -4,10 +4,7 @@ import { getCurrentBossLevel } from './src/utils/game.js'
 
 export class Boss {
   constructor(gameContext, data = { 
-    // size: 16, 
     maxFrame: 0, 
-    // additionalScore: 1000,
-    // sizeMultipler: 1,
     maxFrameX: 0,
     frameX: 0,
     frameY: 0,

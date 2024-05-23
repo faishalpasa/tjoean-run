@@ -95,23 +95,23 @@ export const handleEnemySpeedMultiplier = (game) => {
   if (game.level === 1) {
     game.enemySpeedMultiplier = 1 * bossMultiplier
   } else if (game.level === 2) {
-    game.enemySpeedMultiplier = 1.2 * bossMultiplier
+    game.enemySpeedMultiplier = 1.5 * bossMultiplier
   } else if (game.level === 3) {
-    game.enemySpeedMultiplier = 1.4 * bossMultiplier
-  } else if (game.level === 4) {
-    game.enemySpeedMultiplier = 1.8 * bossMultiplier
-  } else if (game.level === 5) {
     game.enemySpeedMultiplier = 2 * bossMultiplier
-  } else if (game.level === 6) {
-    game.enemySpeedMultiplier = 2.2 * bossMultiplier
-  } else if (game.level === 7) {
-    game.enemySpeedMultiplier = 2.4 * bossMultiplier
-  } else if (game.level === 8) {
-    game.enemySpeedMultiplier = 2.6 * bossMultiplier
-  } else if (game.level === 9) {
-    game.enemySpeedMultiplier = 2.8 * bossMultiplier
-  } else if (game.level >= 10) {
+  } else if (game.level === 4) {
+    game.enemySpeedMultiplier = 2.5 * bossMultiplier
+  } else if (game.level === 5) {
     game.enemySpeedMultiplier = 3 * bossMultiplier
+  } else if (game.level === 6) {
+    game.enemySpeedMultiplier = 3.5 * bossMultiplier
+  } else if (game.level === 7) {
+    game.enemySpeedMultiplier = 4 * bossMultiplier
+  } else if (game.level === 8) {
+    game.enemySpeedMultiplier = 4,5 * bossMultiplier
+  } else if (game.level === 9) {
+    game.enemySpeedMultiplier = 5 * bossMultiplier
+  } else if (game.level >= 10) {
+    game.enemySpeedMultiplier = 5.5 * bossMultiplier
   }
 
   return game
