@@ -35,9 +35,9 @@ export const handleShowCoins = ({ canvasContext, deltaTime, coins, game }) => {
           sWidth: randomCoin.sWidth,
           sHeight: randomCoin.sHeight,
           dx: CANVAS.WIDTH,
-          dy: CANVAS.HEIGHT - getRatioSize(CANVAS.TILE_HEIGHT * CANVAS.TILE_MULTIPLIER) - getRatioSize(32) * yPosition,
+          dy: CANVAS.HEIGHT - getRatioSize(CANVAS.TILE_HEIGHT * CANVAS.TILE_MULTIPLIER) - getRatioSize(randomCoin.dHeight) * yPosition,
           dWidth: getRatioSize(randomCoin.dWidth),
-          dHeight: getRatioSize(randomCoin.dWidth)
+          dHeight: getRatioSize(randomCoin.dHeight)
         },
         maxFrame: randomCoin.maxFrame,
         additionalScore: randomCoin.additionalScore,

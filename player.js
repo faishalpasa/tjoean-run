@@ -68,7 +68,7 @@ export class Player {
     // this.playerHeight = getRatioSize(this.srcHeight * 2)
     this.playerWidth = getRatioSize(48)
     this.playerHeight = getRatioSize(48)
-    this.initialPlayerY = this.gameHeight - getRatioSize(this.playerHeight) - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER)
+    this.initialPlayerY = this.gameHeight - getRatioSize(TILE_HEIGHT * TILE_MULTIPLIER) - this.playerHeight
     this.x = 0
     this.y = this.initialPlayerY
     this.vy = 0

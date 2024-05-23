@@ -33,7 +33,7 @@ export const handleShowEnemies = ({ canvasContext, game, deltaTime, enemies }) =
           sWidth: randomEnemy.sWidth || 16,
           sHeight: randomEnemy.sHeight || 16,
           dx: CANVAS.WIDTH,
-          dy: CANVAS.HEIGHT - getRatioSize(CANVAS.TILE_HEIGHT * CANVAS.TILE_MULTIPLIER) - getRatioSize(randomEnemy.dWidth || 32) * yPosition,
+          dy: CANVAS.HEIGHT - getRatioSize(CANVAS.TILE_HEIGHT * CANVAS.TILE_MULTIPLIER) - getRatioSize(randomEnemy.dHeight || 32) * yPosition,
           dWidth: getRatioSize(randomEnemy.dWidth || 32),
           dHeight: getRatioSize(randomEnemy.dHeight || 32)
         },
