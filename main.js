@@ -101,6 +101,7 @@ window.addEventListener('load', () => {
   }
 
   // Start Game
+  let startGameAnimation
 
   const startGame = (timestamp) => {
     const deltaTime = timestamp - game.lastTime
